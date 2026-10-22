@@ -15,5 +15,6 @@
   },
   "hostedDatabaseTested": false,
   "remoteMigrationExecuted": false,
-  "productionDeploymentExecuted": false
+  "productionDeploymentExecuted": false,
+  "implementationCommit": "8e34e5ef93df5e4875255ff06ad5148b7b731a4a"
 }

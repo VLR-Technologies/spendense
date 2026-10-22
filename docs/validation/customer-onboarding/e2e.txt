@@ -1,0 +1,65 @@
+> spendense@1.0.0 test:e2e
+> playwright test
+
+[WebServer] (node:23056) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:23057) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:23069) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 36 tests using 1 worker
+
+(node:23076) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -   1 [desktop] › e2e/customer-onboarding.spec.ts:76:5 › customer categories, paid weekdays, retry, once-only setup and settings
+  -   2 [desktop] › e2e/customer-onboarding.spec.ts:230:5 › legacy customer completes missing name once without replacing financial history
+  ✓   3 [desktop] › e2e/daywise.spec.ts:7:5 › guest-first complete local finance journey (6.8s)
+  ✓   4 [desktop] › e2e/daywise.spec.ts:144:5 › demo dashboard, all views, and responsive screenshots (5.8s)
+  ✓   5 [desktop] › e2e/daywise.spec.ts:197:5 › guest can skip setup and start from an empty budget (2.5s)
+[WebServer] [browser] The query {"id":"315d7757-ac12-49d0-a8c7-f2acadea85e6","profileId":"42f2753f-a962-44ca-a1ee-79a3890e6489"} on commitments would benefit from a compound index [id+profileId] (src/lib/repositories/local.ts:361:8)
+  ✓   6 [desktop] › e2e/daywise.spec.ts:223:5 › monthly commitments support one-time conversion, pause, resume and payment metadata (3.1s)
+  ✓   7 [desktop] › e2e/daywise.spec.ts:297:5 › blocked browser storage shows an actionable recovery state (607ms)
+  -   8 [desktop] › e2e/email-password.spec.ts:75:5 › email/password confirmation, cloud financial history, two accounts and password recovery
+  ✓   9 [desktop] › e2e/rebranding.spec.ts:3:5 › Spendense branding preserves an existing demo profile and financial records (1.2s)
+[WebServer] [browser] The query {"id":"ef7b360e-604e-4f7b-83e0-4ace39acb78f","profileId":"1ef63380-6297-495f-ba47-a0c3bbc42759"} on expenses would benefit from a compound index [id+profileId] (src/lib/repositories/local.ts:263:34)
+  ✓  10 [desktop] › e2e/stage-2.spec.ts:33:5 › Stage 2 financial chain, calendar keyboard controls and nested sheet focus (4.1s)
+[WebServer] [browser] You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled
+[WebServer] [browser] You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled (src/components/forms.tsx:36:35)
+[WebServer] [browser] You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled (src/components/forms.tsx:36:35)
+  ✓  11 [desktop] › e2e/stage-2.spec.ts:151:5 › Stage 2 screenshots and navigation in both themes (4.1s)
+  -  12 [desktop] › e2e/stage-2.spec.ts:220:5 › Stage 2 responsive layouts retain usable touch controls at narrow widths
+  ✓  13 [desktop] › e2e/stage-2.spec.ts:282:5 › Stage 2 reads existing v1 history and recurring data without rewriting saved records (1.8s)
+  ✓  14 [desktop] › e2e/stage-3.spec.ts:79:5 › optional sign-in preserves guest access and reports missing configuration (2.1s)
+  ✓  15 [desktop] › e2e/stage-3.spec.ts:120:5 › expired callback provides an actionable sign-in error (1.1s)
+  -  16 [desktop] › e2e/stage-3.spec.ts:132:5 › local email authentication, consented import, retry, account isolation, refresh and cross-device persistence
+  ✓  17 [desktop] › e2e/ui-upgrade.spec.ts:3:5 › prominent authentication, explicit guest identity, and stable guest entry (2.9s)
+  ✓  18 [desktop] › e2e/ui-upgrade.spec.ts:79:5 › responsive visual hierarchy, themes and large amounts (7.9s)
+(node:23302) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -  19 [mobile] › e2e/customer-onboarding.spec.ts:76:5 › customer categories, paid weekdays, retry, once-only setup and settings
+  -  20 [mobile] › e2e/customer-onboarding.spec.ts:230:5 › legacy customer completes missing name once without replacing financial history
+  ✓  21 [mobile] › e2e/daywise.spec.ts:7:5 › guest-first complete local finance journey (6.3s)
+  ✓  22 [mobile] › e2e/daywise.spec.ts:144:5 › demo dashboard, all views, and responsive screenshots (5.6s)
+  ✓  23 [mobile] › e2e/daywise.spec.ts:197:5 › guest can skip setup and start from an empty budget (1.5s)
+[WebServer] [browser] The query {"id":"711c0d90-be51-4c1c-82d9-d1c2259f8734","profileId":"3d2e0fc5-a87b-4a87-bb93-9b34ae6c31d4"} on commitments would benefit from a compound index [id+profileId] (src/lib/repositories/local.ts:361:8)
+  ✓  24 [mobile] › e2e/daywise.spec.ts:223:5 › monthly commitments support one-time conversion, pause, resume and payment metadata (3.1s)
+  ✓  25 [mobile] › e2e/daywise.spec.ts:297:5 › blocked browser storage shows an actionable recovery state (863ms)
+  -  26 [mobile] › e2e/email-password.spec.ts:75:5 › email/password confirmation, cloud financial history, two accounts and password recovery
+  ✓  27 [mobile] › e2e/rebranding.spec.ts:3:5 › Spendense branding preserves an existing demo profile and financial records (1.2s)
+[WebServer] [browser] The query {"id":"9a167ebb-0a55-4623-afe0-a0e27737db35","profileId":"9118731c-246b-4644-bc8a-149356861d88"} on expenses would benefit from a compound index [id+profileId] (src/lib/repositories/local.ts:263:34)
+  ✓  28 [mobile] › e2e/stage-2.spec.ts:33:5 › Stage 2 financial chain, calendar keyboard controls and nested sheet focus (4.3s)
+[WebServer] [browser] You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled
+[WebServer] [browser] You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled (src/components/forms.tsx:36:35)
+[WebServer] [browser] You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled (src/components/forms.tsx:36:35)
+  ✓  29 [mobile] › e2e/stage-2.spec.ts:151:5 › Stage 2 screenshots and navigation in both themes (4.8s)
+  ✓  30 [mobile] › e2e/stage-2.spec.ts:220:5 › Stage 2 responsive layouts retain usable touch controls at narrow widths (13.2s)
+  ✓  31 [mobile] › e2e/stage-2.spec.ts:282:5 › Stage 2 reads existing v1 history and recurring data without rewriting saved records (2.3s)
+  ✓  32 [mobile] › e2e/stage-3.spec.ts:79:5 › optional sign-in preserves guest access and reports missing configuration (2.1s)
+  ✓  33 [mobile] › e2e/stage-3.spec.ts:120:5 › expired callback provides an actionable sign-in error (961ms)
+  -  34 [mobile] › e2e/stage-3.spec.ts:132:5 › local email authentication, consented import, retry, account isolation, refresh and cross-device persistence
+  ✓  35 [mobile] › e2e/ui-upgrade.spec.ts:3:5 › prominent authentication, explicit guest identity, and stable guest entry (2.8s)
+  ✓  36 [mobile] › e2e/ui-upgrade.spec.ts:79:5 › responsive visual hierarchy, themes and large amounts (8.1s)
+
+  9 skipped
+  27 passed (1.8m)

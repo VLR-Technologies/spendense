@@ -1,0 +1,89 @@
+> spendense@1.0.0 test:cloud
+> node scripts/test-cloud.mjs
+
+[WebServer] (node:25169) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:25170) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:25182) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 36 tests using 1 worker
+
+(node:25189) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [desktop] › e2e/customer-onboarding.spec.ts:76:5 › customer categories, paid weekdays, retry, once-only setup and settings (8.6s)
+  ✓   2 [desktop] › e2e/customer-onboarding.spec.ts:257:5 › legacy customer completes missing name once without replacing financial history (3.4s)
+  ✓   3 [desktop] › e2e/daywise.spec.ts:7:5 › guest-first complete local finance journey (7.7s)
+  ✓   4 [desktop] › e2e/daywise.spec.ts:144:5 › demo dashboard, all views, and responsive screenshots (12.0s)
+  ✓   5 [desktop] › e2e/daywise.spec.ts:197:5 › guest can skip setup and start from an empty budget (3.9s)
+[WebServer] [browser] The query {"id":"2a8e70c9-48a9-4589-8110-535777810ba5","profileId":"871499db-b0e7-425b-ad50-c90ab116a50a"} on commitments would benefit from a compound index [id+profileId] (src/lib/repositories/local.ts:361:8)
+  ✓   6 [desktop] › e2e/daywise.spec.ts:223:5 › monthly commitments support one-time conversion, pause, resume and payment metadata (3.8s)
+  ✓   7 [desktop] › e2e/daywise.spec.ts:297:5 › blocked browser storage shows an actionable recovery state (734ms)
+  ✓   8 [desktop] › e2e/email-password.spec.ts:75:5 › email/password confirmation, cloud financial history, two accounts and password recovery (18.0s)
+  ✓   9 [desktop] › e2e/rebranding.spec.ts:3:5 › Spendense branding preserves an existing demo profile and financial records (1.6s)
+[WebServer] [browser] The query {"id":"05023acd-bec6-47a3-b730-4e06dabad9cc","profileId":"428d4a56-7770-482b-b0a5-707e8810dbb0"} on expenses would benefit from a compound index [id+profileId] (src/lib/repositories/local.ts:263:34)
+  ✓  10 [desktop] › e2e/stage-2.spec.ts:33:5 › Stage 2 financial chain, calendar keyboard controls and nested sheet focus (3.8s)
+[WebServer] [browser] You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled
+[WebServer] [browser] You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled (src/components/forms.tsx:36:35)
+[WebServer] [browser] You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled (src/components/forms.tsx:36:35)
+  ✓  11 [desktop] › e2e/stage-2.spec.ts:151:5 › Stage 2 screenshots and navigation in both themes (3.5s)
+  -  12 [desktop] › e2e/stage-2.spec.ts:220:5 › Stage 2 responsive layouts retain usable touch controls at narrow widths
+  ✓  13 [desktop] › e2e/stage-2.spec.ts:282:5 › Stage 2 reads existing v1 history and recurring data without rewriting saved records (1.7s)
+  -  14 [desktop] › e2e/stage-3.spec.ts:79:5 › optional sign-in preserves guest access and reports missing configuration
+  ✓  15 [desktop] › e2e/stage-3.spec.ts:120:5 › expired callback provides an actionable sign-in error (882ms)
+[WebServer] Error [AuthApiError]: Refresh token is not valid
+[WebServer]     at ignore-listed frames {
+[WebServer]   __isAuthError: true,
+[WebServer]   status: 400,
+[WebServer]   code: 'validation_failed'
+[WebServer] }
+[WebServer] Error [AuthApiError]: Refresh token is not valid
+[WebServer]     at ignore-listed frames {
+[WebServer]   __isAuthError: true,
+[WebServer]   status: 400,
+[WebServer]   code: 'validation_failed'
+[WebServer] }
+  ✓  16 [desktop] › e2e/stage-3.spec.ts:132:5 › local email authentication, consented import, retry, account isolation, refresh and cross-device persistence (15.8s)
+  ✓  17 [desktop] › e2e/ui-upgrade.spec.ts:3:5 › prominent authentication, explicit guest identity, and stable guest entry (2.9s)
+  ✓  18 [desktop] › e2e/ui-upgrade.spec.ts:79:5 › responsive visual hierarchy, themes and large amounts (7.6s)
+(node:25622) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  19 [mobile] › e2e/customer-onboarding.spec.ts:76:5 › customer categories, paid weekdays, retry, once-only setup and settings (6.5s)
+  ✓  20 [mobile] › e2e/customer-onboarding.spec.ts:257:5 › legacy customer completes missing name once without replacing financial history (2.6s)
+  ✓  21 [mobile] › e2e/daywise.spec.ts:7:5 › guest-first complete local finance journey (5.9s)
+  ✓  22 [mobile] › e2e/daywise.spec.ts:144:5 › demo dashboard, all views, and responsive screenshots (5.2s)
+  ✓  23 [mobile] › e2e/daywise.spec.ts:197:5 › guest can skip setup and start from an empty budget (1.5s)
+[WebServer] [browser] The query {"id":"0a1dcbc2-74bf-49fa-8026-119d7bb4d0df","profileId":"391d2262-435d-44f6-a714-955839ea4ebc"} on commitments would benefit from a compound index [id+profileId] (src/lib/repositories/local.ts:361:8)
+  ✓  24 [mobile] › e2e/daywise.spec.ts:223:5 › monthly commitments support one-time conversion, pause, resume and payment metadata (3.1s)
+  ✓  25 [mobile] › e2e/daywise.spec.ts:297:5 › blocked browser storage shows an actionable recovery state (638ms)
+  ✓  26 [mobile] › e2e/email-password.spec.ts:75:5 › email/password confirmation, cloud financial history, two accounts and password recovery (15.4s)
+  ✓  27 [mobile] › e2e/rebranding.spec.ts:3:5 › Spendense branding preserves an existing demo profile and financial records (1.1s)
+[WebServer] [browser] The query {"id":"f52c0e5b-f8df-4bdd-85d2-2019a29acbbc","profileId":"9d7a8d1c-d041-4603-bcd6-6307d5690a67"} on expenses would benefit from a compound index [id+profileId] (src/lib/repositories/local.ts:263:34)
+  ✓  28 [mobile] › e2e/stage-2.spec.ts:33:5 › Stage 2 financial chain, calendar keyboard controls and nested sheet focus (3.8s)
+[WebServer] [browser] You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled
+[WebServer] [browser] You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled (src/components/forms.tsx:36:35)
+[WebServer] [browser] You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled (src/components/forms.tsx:36:35)
+  ✓  29 [mobile] › e2e/stage-2.spec.ts:151:5 › Stage 2 screenshots and navigation in both themes (4.3s)
+  ✓  30 [mobile] › e2e/stage-2.spec.ts:220:5 › Stage 2 responsive layouts retain usable touch controls at narrow widths (10.8s)
+  ✓  31 [mobile] › e2e/stage-2.spec.ts:282:5 › Stage 2 reads existing v1 history and recurring data without rewriting saved records (1.6s)
+  -  32 [mobile] › e2e/stage-3.spec.ts:79:5 › optional sign-in preserves guest access and reports missing configuration
+  ✓  33 [mobile] › e2e/stage-3.spec.ts:120:5 › expired callback provides an actionable sign-in error (862ms)
+[WebServer] Error [AuthApiError]: Refresh token is not valid
+[WebServer]     at ignore-listed frames {
+[WebServer]   __isAuthError: true,
+[WebServer]   status: 400,
+[WebServer]   code: 'validation_failed'
+[WebServer] }
+[WebServer] Error [AuthApiError]: Refresh token is not valid
+[WebServer]     at ignore-listed frames {
+[WebServer]   __isAuthError: true,
+[WebServer]   status: 400,
+[WebServer]   code: 'validation_failed'
+[WebServer] }
+  ✓  34 [mobile] › e2e/stage-3.spec.ts:132:5 › local email authentication, consented import, retry, account isolation, refresh and cross-device persistence (16.0s)
+  ✓  35 [mobile] › e2e/ui-upgrade.spec.ts:3:5 › prominent authentication, explicit guest identity, and stable guest entry (3.0s)
+  ✓  36 [mobile] › e2e/ui-upgrade.spec.ts:79:5 › responsive visual hierarchy, themes and large amounts (9.0s)
+
+  3 skipped
+  33 passed (3.3m)
