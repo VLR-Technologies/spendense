@@ -31,9 +31,7 @@ test("prominent authentication, explicit guest identity, and stable guest entry"
     .click();
   await page.getByRole("button", { name: "Skip setup for now" }).click();
   await expect(page.locator(".customer-greeting")).toContainText("Guest");
-  await expect(page.locator(".hero-customer")).toHaveText(
-    "Guest’s Daily Budget",
-  );
+  await expect(page.locator(".hero-customer")).toHaveText("Guest");
   await expect(
     page.getByRole("button", { name: "Sign in", exact: true }),
   ).toHaveCount(1);
@@ -58,9 +56,7 @@ test("prominent authentication, explicit guest identity, and stable guest entry"
   const before = await profiles();
   expect(before).toHaveLength(1);
   await page.reload();
-  await expect(page.locator(".hero-customer")).toHaveText(
-    "Guest’s Daily Budget",
-  );
+  await expect(page.locator(".hero-customer")).toHaveText("Guest");
   expect(await profiles()).toEqual(before);
   // Test-only re-entry, preserving IndexedDB records.
   await page.evaluate(() => localStorage.removeItem("daywise-profile"));
@@ -68,9 +64,7 @@ test("prominent authentication, explicit guest identity, and stable guest entry"
   await page
     .getByRole("button", { name: "Continue as guest", exact: true })
     .click();
-  await expect(page.locator(".hero-customer")).toHaveText(
-    "Guest’s Daily Budget",
-  );
+  await expect(page.locator(".hero-customer")).toHaveText("Guest");
   expect(await profiles()).toEqual(before);
   await page.goto("/settings");
   await page.getByLabel("Preferred guest name (optional)").fill("Élodie 王");
@@ -78,9 +72,7 @@ test("prominent authentication, explicit guest identity, and stable guest entry"
     .getByRole("button", { name: "Save display name", exact: true })
     .click();
   await page.goto("/dashboard");
-  await expect(page.locator(".hero-customer")).toHaveText(
-    "Élodie 王’s Daily Budget",
-  );
+  await expect(page.locator(".hero-customer")).toHaveText("Élodie 王");
   await expect(page.locator(".page-heading")).toContainText("Guest Mode");
 });
 
@@ -96,9 +88,7 @@ test("responsive visual hierarchy, themes and large amounts", async ({
       await page.goto("/settings");
       await page.locator(`.theme-option.${theme}`).click();
       await page.goto("/dashboard");
-      await expect(page.locator(".hero-customer")).toHaveText(
-        "Demo’s Daily Budget",
-      );
+      await expect(page.locator(".hero-customer")).toHaveText("Demo");
       const layout = await page.evaluate(() => {
         const hero = document.querySelector(".daily-hero")!;
         const amount = hero.querySelector(".hero-amount")!;

@@ -70,11 +70,8 @@ export function Dashboard() {
               <Wallet size={21} />
             </span>
             <span>
-              <span
-                className="hero-customer"
-                title={`${identity}’s Daily Budget`}
-              >
-                {identity}’s Daily Budget
+              <span className="hero-customer" title={identity}>
+                {identity}
               </span>
             </span>
             <span className="hero-sparkle">
@@ -89,15 +86,19 @@ export function Dashboard() {
                 )
               : `${monthLabel(month)} · Daily average`}
           </div>
+          <div className="hero-budget-label">
+            {active ? "Available today" : "Average daily allowance"}
+          </div>
           <div className="hero-amount">
             <AnimatedMoney value={daily} exact />
             <span>/ day</span>
           </div>
-          <p>
-            {active
-              ? "Daily allocation after fixed commitments."
-              : `Average across ${s.days.length} days. Select a day for its exact allowance.`}
-          </p>
+          {!active && (
+            <p>
+              Average across {s.days.length} days. Select a day for its exact
+              allowance.
+            </p>
+          )}
           {!active && <span className="hero-period-note">Monthly totals</span>}
           <div className="hero-bottom">
             <div>
@@ -156,8 +157,7 @@ export function Dashboard() {
         </div>
         <div className="allocation-detail">
           <div className="allocation-labels">
-            <span>Monthly income allocation</span>
-            <strong>{money(s.income)}</strong>
+            <span>Monthly allocation distribution</span>
           </div>
           <div className="allocation-track">
             <span style={{ width: `${(s.fixed / base) * 100}%` }} />

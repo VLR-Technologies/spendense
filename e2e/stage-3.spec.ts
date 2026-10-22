@@ -1,3 +1,5 @@
+import { readLocalSession, writeLocalSession } from "./helpers/session";
+import { completeCustomerSetup } from "./helpers/customer";
 import { createClient } from "@supabase/supabase-js";
 import os from "node:os";
 import pathModule from "node:path";
@@ -55,6 +57,7 @@ async function signIn(page: Page, request: APIRequestContext, email: string) {
     )
     .toBe(true);
   await page.goto(link);
+  await completeCustomerSetup(page);
   await expect(
     page.getByRole("button", { name: "Manage account", exact: true }).first(),
   ).toBeVisible();
@@ -142,9 +145,10 @@ test("local email authentication, consented import, retry, account isolation, re
     page.getByRole("region", { name: "Monthly budget calculation" }),
   ).toContainText("₹81,000");
   await signIn(page, request, email);
+  await expect(page.locator(".hero-customer")).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Create budget", exact: true }),
-  ).toBeVisible();
+    page.getByRole("region", { name: "Monthly budget calculation" }),
+  ).toContainText("₹0");
   // No automatic upload, even after a real email login.
   await account(page);
   await expect(page.getByRole("dialog")).toContainText(email);
@@ -281,30 +285,14 @@ test("local email authentication, consented import, retry, account isolation, re
   await restarted.close();
   await fs.rm(disk, { recursive: true, force: true });
   // Expiry of the stored session refreshes cookies server-side from its refresh token.
-  const cookies = await page.context().cookies();
-  const sessionCookie = cookies.find(
-    (c) => c.name.includes("auth-token") && !c.name.includes("code-verifier"),
-  );
-  expect(sessionCookie).toBeTruthy();
-  const stored = JSON.parse(
-    Buffer.from(
-      sessionCookie!.value.replace(/^base64-/, ""),
-      "base64url",
-    ).toString(),
-  );
+  const fixture = await readLocalSession(page);
+  const stored = fixture.session;
   stored.expires_at = 1;
-  await page.context().addCookies([
-    {
-      ...sessionCookie!,
-      value: `base64-${Buffer.from(JSON.stringify(stored)).toString("base64url")}`,
-    },
-  ]);
+  await writeLocalSession(page, fixture);
   await page.reload();
   await expect(page.getByRole("heading", { name: "Settings" })).toBeVisible();
-  const renewed = await page.context().cookies();
-  expect(renewed.find((c) => c.name === sessionCookie!.name)?.value).not.toBe(
-    `base64-${Buffer.from(JSON.stringify(stored)).toString("base64url")}`,
-  );
+  const renewed = await readLocalSession(page);
+  expect(renewed.session.expires_at).toBeGreaterThan(1);
   // Unavailable cloud operations show an error and can be retried.
   await page.route("**/rest/v1/rpc/daywise_month", (route) => route.abort());
   await page.goto("/dashboard");
@@ -329,22 +317,15 @@ test("local email authentication, consented import, retry, account isolation, re
     page.getByRole("region", { name: "Monthly budget calculation" }),
   ).toContainText("₹81,000");
   await signIn(page, request, `other-${email}`);
-  await expect(
-    page.getByRole("button", { name: "Create budget", exact: true }),
-  ).toBeVisible();
+  await expect(page.locator(".hero-customer")).toBeVisible();
   await expect(
     page.getByRole("region", { name: "Monthly budget calculation" }),
-  ).toHaveCount(0);
+  ).toContainText("₹0");
+  await expect(
+    page.getByRole("region", { name: "Monthly budget calculation" }),
+  ).not.toContainText("₹81,000");
   // Real authenticated HTTP requests cannot bypass database ownership.
-  const bobCookie = (await page.context().cookies()).find(
-    (c) => c.name.includes("auth-token") && !c.name.includes("code-verifier"),
-  )!;
-  const bobSession = JSON.parse(
-    Buffer.from(
-      bobCookie.value.replace(/^base64-/, ""),
-      "base64url",
-    ).toString(),
-  );
+  const bobSession = (await readLocalSession(page)).session;
   const attacker = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
@@ -426,21 +407,11 @@ test("local email authentication, consented import, retry, account isolation, re
   await expect(
     page.getByRole("region", { name: "Monthly budget calculation" }),
   ).toContainText("₹81,000");
-  const invalid = (await page.context().cookies()).find(
-    (c) => c.name.includes("auth-token") && !c.name.includes("code-verifier"),
-  )!;
-  const invalidSession = JSON.parse(
-    Buffer.from(invalid.value.replace(/^base64-/, ""), "base64url").toString(),
-  );
-  invalidSession.access_token = "invalid.jwt.token";
-  invalidSession.refresh_token = "expired-invalid";
-  invalidSession.expires_at = 1;
-  await page.context().addCookies([
-    {
-      ...invalid,
-      value: `base64-${Buffer.from(JSON.stringify(invalidSession)).toString("base64url")}`,
-    },
-  ]);
+  const invalid = await readLocalSession(page);
+  invalid.session.access_token = "invalid.jwt.token";
+  invalid.session.refresh_token = "expired-invalid";
+  invalid.session.expires_at = 1;
+  await writeLocalSession(page, invalid);
   await page.reload();
   await expect(
     page.getByRole("button", { name: "Sign in", exact: true }).first(),

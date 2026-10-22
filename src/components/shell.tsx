@@ -4,6 +4,10 @@ import { repository as localRepository } from "@/lib/repositories/local";
 import { CloudRepository } from "@/lib/repositories/cloud";
 import { profileDisplayName } from "@/lib/branding";
 import { Logo } from "./logo";
+import {
+  CustomerOnboarding,
+  PersonalIncomeDetails,
+} from "./customer-onboarding";
 import { AccountControls } from "./account";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -46,7 +50,16 @@ const navigation = [
   { href: "/insights", label: "Insights", icon: ChartNoAxesCombined },
 ];
 function Welcome() {
-  const { repository, mode, account, act, selectProfile, guestName } = useApp();
+  const {
+    repository,
+    mode,
+    account,
+    act,
+    selectProfile,
+    guestName,
+    customerError,
+    refreshCustomer,
+  } = useApp();
   const [busy, setBusy] = useState(false);
   const starting = useRef(false);
   async function start(demo = false) {
@@ -67,11 +80,7 @@ function Welcome() {
     <div className="welcome">
       <header>
         <Logo />
-        {account ? (
-          <AccountControls />
-        ) : (
-          <span className="welcome-header-label">Personal finance</span>
-        )}
+        {account ? <AccountControls /> : null}
       </header>
       <main id="main-content" className="welcome-main">
         <motion.div
@@ -79,9 +88,6 @@ function Welcome() {
           animate={{ opacity: 1, y: 0 }}
           className="welcome-copy"
         >
-          <span className="pill">
-            <span className="status-dot" /> Personal finance, with perspective
-          </span>
           <h1>
             {account ? (
               <>
@@ -99,6 +105,14 @@ function Welcome() {
             Plan your month. Understand your daily budget. Keep every expense in
             view.
           </p>
+          {account && customerError && (
+            <div className="error-banner" role="alert">
+              {customerError}
+              <Button variant="secondary" onClick={refreshCustomer}>
+                Retry personal details
+              </Button>
+            </div>
+          )}
           {!account && <AccountControls landing />}
           <div className="welcome-actions">
             <Button
@@ -174,7 +188,6 @@ function Welcome() {
         </div>
       </main>
       <footer>
-        <span>Spendense · Personal finance</span>
         <span>
           Guest data stays in this browser. Export backups to keep it safe.
         </span>
@@ -277,6 +290,11 @@ function Onboarding() {
 export function AppShell({ children }: { children: ReactNode }) {
   const {
     repository,
+    account,
+    customerPreferences,
+    customerStatus,
+    customerError,
+    refreshCustomer,
     mode,
     switchMode,
     refresh,
@@ -325,6 +343,20 @@ export function AppShell({ children }: { children: ReactNode }) {
         <AccountControls />
       </div>
     );
+  if (account && mode === "cloud" && customerStatus === "loading")
+    return (
+      <div className="app-loading">
+        <Logo />
+        <span>Loading personal details…</span>
+      </div>
+    );
+  if (
+    account &&
+    mode === "cloud" &&
+    customerStatus === "ready" &&
+    !customerPreferences
+  )
+    return <CustomerOnboarding />;
   if (!profileId && path === "/settings")
     return (
       <div className="welcome">
@@ -335,6 +367,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <main id="main-content" className="empty-account-settings">
           <h1>Account Settings</h1>
           <AccountControls expanded />
+          <PersonalIncomeDetails />
           <Button asChild variant="secondary">
             <Link href="/dashboard">Back to budgets</Link>
           </Button>
@@ -370,7 +403,6 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Link href="/dashboard" aria-label="Spendense home">
             <Logo compact={collapsed} />
           </Link>
-          <span className="nav-label">Personal finance</span>
           <nav aria-label="Main navigation">
             {navigation.map((n) => (
               <Link
@@ -461,8 +493,6 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Logo />
             </Link>
             <div className="breadcrumb">
-              Personal finance
-              <ChevronRight size={13} />
               <strong>
                 {navigation.find((n) => path === n.href)?.label ??
                   (path === "/settings" ? "Settings" : "Dashboard")}
@@ -493,6 +523,14 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
           </header>
           <main id="main-content" className="main-content">
+            {customerError && mode === "cloud" && (
+              <div className="error-banner" role="alert">
+                {customerError}
+                <Button variant="secondary" size="sm" onClick={refreshCustomer}>
+                  Retry personal details
+                </Button>
+              </div>
+            )}
             {error && (
               <div className="error-banner" role="alert">
                 {error}{" "}

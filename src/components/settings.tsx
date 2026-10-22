@@ -17,6 +17,7 @@ import {
   Database,
   Info,
 } from "lucide-react";
+import { PersonalIncomeDetails } from "./customer-onboarding";
 import { AccountControls } from "./account";
 import { useApp } from "./provider";
 import { type Backup } from "@/lib/validation";
@@ -81,6 +82,7 @@ export function SettingsPage() {
       <div className="settings-layout">
         <div className="settings-main">
           <AccountControls expanded />
+          <PersonalIncomeDetails />
           <section className="panel settings-panel">
             <div className="panel-heading">
               <div>
@@ -332,11 +334,7 @@ export function SettingsPage() {
               browsing may not keep them. Export backups regularly.
             </p>
           </div>
-          <p className="settings-version">
-            Spendense · VERSION 1.0
-            <br />
-            <span>Personal finance</span>
-          </p>
+          <p className="settings-version">Spendense · VERSION 1.0</p>
         </aside>
       </div>
       <ProfileDialog open={profileOpen} onClose={() => setProfileOpen(false)} />

@@ -58,11 +58,16 @@ export function MonthlyBudgetBreakdown({
           </dd>
         </div>
       </dl>
-      <p className="budget-explanation">
-        Income is allocated across the month, not received daily. Fixed
-        deductions include recurring and one-time commitments.{" "}
+      <div className="budget-explanation">
+        <details>
+          <summary>About this calculation</summary>
+          <p>
+            Income is allocated across the month, not received daily. Fixed
+            deductions include recurring and one-time commitments.
+          </p>
+        </details>
         <Link href="/monthly-plan">Manage plan</Link>
-      </p>
+      </div>
     </section>
   );
 }

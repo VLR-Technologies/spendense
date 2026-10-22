@@ -1,3 +1,4 @@
+import { completeCustomerSetup, editCustomerName } from "./helpers/customer";
 import {
   test,
   expect,
@@ -53,9 +54,11 @@ async function signUp(page: Page, request: APIRequestContext, email: string) {
     )
     .toBe(true);
   await page.goto(link);
-  await expect(
-    page.getByRole("button", { name: "Create budget", exact: true }),
-  ).toBeVisible();
+  await completeCustomerSetup(
+    page,
+    email.startsWith("other-") ? undefined : "100000.01",
+    email.startsWith("other-") ? undefined : "10000.03",
+  );
 }
 async function signOut(page: Page) {
   await page
@@ -86,49 +89,18 @@ test("email/password confirmation, cloud financial history, two accounts and pas
   await expect(
     page.getByRole("button", { name: "Manage account", exact: true }),
   ).toContainText("Alex 王");
-  // Signing up and confirming uploads no guest records.
-  await expect(
-    page.getByRole("region", { name: "Monthly budget calculation" }),
-  ).toHaveCount(0);
-  await page
-    .getByRole("button", { name: "Create budget", exact: true })
-    .click();
-  await page
-    .getByRole("spinbutton", { name: "Monthly income amount" })
-    .fill("100000.01");
-  await page.getByRole("button", { name: "Continue", exact: true }).click();
-  await page.getByRole("button", { name: "Add a monthly commitment" }).click();
-  const form = page.getByRole("dialog").last();
-  await form.getByLabel("Expense name", { exact: true }).fill("Cloud rent");
-  await form
-    .getByRole("spinbutton", { name: "Commitment amount" })
-    .fill("10000.03");
-  await form.getByRole("button", { name: "Save commitment" }).click();
-  await page.getByRole("button", { name: "See my daily allowance" }).click();
-  await page.getByRole("button", { name: "Open my calendar" }).click();
+  // New cloud setup is separate from the guest demo and uses explicitly confirmed amounts.
   await page.goto("/dashboard");
   await expect(page.locator(".customer-greeting")).toContainText("Alex 王");
-  await expect(page.locator(".hero-customer")).toHaveText(
-    "Alex 王’s Daily Budget",
-  );
+  await expect(page.locator(".hero-customer")).toHaveText("Alex 王");
   await page.reload();
-  await expect(page.locator(".hero-customer")).toHaveText(
-    "Alex 王’s Daily Budget",
-  );
-  await page.goto("/settings");
-  await page
-    .getByLabel("Customer display name", { exact: true })
-    .fill("Alexandra 王");
-  await page
-    .getByRole("button", { name: "Save display name", exact: true })
-    .click();
+  await expect(page.locator(".hero-customer")).toHaveText("Alex 王");
+  await editCustomerName(page, "Alexandra 王");
   await expect(
     page.getByRole("button", { name: "Manage account", exact: true }),
   ).toContainText("Alexandra 王");
   await page.goto("/dashboard");
-  await expect(page.locator(".hero-customer")).toHaveText(
-    "Alexandra 王’s Daily Budget",
-  );
+  await expect(page.locator(".hero-customer")).toHaveText("Alexandra 王");
   await fs.mkdir("docs/screenshots/ui-upgrade/after", { recursive: true });
   await page.screenshot({
     path: `docs/screenshots/ui-upgrade/after/${info.project.name}-customer-dashboard.png`,
@@ -228,9 +200,7 @@ test("email/password confirmation, cloud financial history, two accounts and pas
     .getByRole("button", { name: "Skip setup for now", exact: true })
     .click();
   await page.goto("/dashboard");
-  await expect(page.locator(".hero-customer")).toHaveText(
-    "Alexandra 王’s Daily Budget",
-  );
+  await expect(page.locator(".hero-customer")).toHaveText("Alexandra 王");
   await expect(page.getByText("Cloud lunch", { exact: true })).toHaveCount(0);
   await page
     .getByRole("button", { name: "Manage account", exact: true })
@@ -303,9 +273,10 @@ test("email/password confirmation, cloud financial history, two accounts and pas
   await page
     .getByRole("button", { name: "Save password", exact: true })
     .click();
-  await expect(
-    page.getByRole("button", { name: "Manage account", exact: true }).first(),
-  ).toBeVisible();
+  await expect(page.getByRole("dialog").getByRole("status")).toContainText(
+    "Password updated",
+  );
+  await page.getByRole("button", { name: "Close dialog", exact: true }).click();
   await signOut(page);
   await page
     .getByRole("button", { name: "Sign in", exact: true })

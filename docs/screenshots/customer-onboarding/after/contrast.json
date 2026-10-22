@@ -1,0 +1,50 @@
+[
+  {
+    "use": "light body",
+    "foreground": "#292738",
+    "background": "#ffffff",
+    "contrast": 14.57
+  },
+  {
+    "use": "light selected body",
+    "foreground": "#292738",
+    "background": "#ede8ff",
+    "contrast": 12.2
+  },
+  {
+    "use": "light accent label",
+    "foreground": "#7153cc",
+    "background": "#ffffff",
+    "contrast": 5.51
+  },
+  {
+    "use": "light primary button",
+    "foreground": "#ffffff",
+    "background": "#6042b8",
+    "contrast": 7.07
+  },
+  {
+    "use": "dark body",
+    "foreground": "#f0eff8",
+    "background": "#22232e",
+    "contrast": 13.66
+  },
+  {
+    "use": "dark selected body",
+    "foreground": "#f0eff8",
+    "background": "#39304f",
+    "contrast": 10.77
+  },
+  {
+    "use": "dark accent label",
+    "foreground": "#b79af6",
+    "background": "#22232e",
+    "contrast": 6.65
+  },
+  {
+    "use": "dark primary button",
+    "foreground": "#211335",
+    "background": "#b79af6",
+    "contrast": 7.42
+  }
+]
