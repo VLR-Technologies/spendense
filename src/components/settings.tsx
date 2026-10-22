@@ -74,11 +74,8 @@ export function SettingsPage() {
     <>
       <div className="page-heading">
         <div>
-          <span className="eyebrow">A SPACE THAT FEELS LIKE YOU</span>
-          <h1>
-            Make yourself at home<span className="heading-dot">.</span>
-          </h1>
-          <p>Your preferences, your profiles, your data.</p>
+          <h1>Settings</h1>
+          <p>Account, budgets, and data preferences.</p>
         </div>
       </div>
       <div className="settings-layout">
@@ -90,13 +87,15 @@ export function SettingsPage() {
                 <h2>
                   <UserRound size={18} />
                   {mode === "cloud"
-                    ? "Your cloud profile"
-                    : "Your local profile"}
+                    ? "Cloud budget"
+                    : profile.demo
+                      ? "Demo budget"
+                      : "Guest budget"}
                 </h2>
                 <p>
                   {mode === "cloud"
-                    ? "Your plans, available across devices."
-                    : "A little organization. No account needed."}
+                    ? "Budget names organize financial records separately from your customer identity."
+                    : "This budget is stored in your browser and is separate from a registered account."}
                 </p>
               </div>
             </div>
@@ -109,7 +108,7 @@ export function SettingsPage() {
                       repository.updateProfile(profile.id, {
                         displayName: name ?? profile.displayName,
                       }),
-                    "Profile name saved",
+                    "Budget name saved",
                   )
                 )
                   setName(null);
@@ -120,7 +119,7 @@ export function SettingsPage() {
                   {profileDisplayName(profile)[0]}
                 </span>
                 <label className="field">
-                  Profile name
+                  Budget name
                   <input
                     value={name ?? profileDisplayName(profile)}
                     maxLength={50}
@@ -135,7 +134,7 @@ export function SettingsPage() {
             </form>
             <div className="setting-row">
               <div>
-                <strong>More room for your plans</strong>
+                <strong>Budget management</strong>
                 <p>Keep personal, student, and family budgets separate.</p>
               </div>
               <Button
@@ -144,7 +143,7 @@ export function SettingsPage() {
                 onClick={() => setProfileOpen(true)}
               >
                 <Plus size={15} />
-                Manage profiles
+                Manage Budgets
               </Button>
             </div>
           </section>
@@ -152,9 +151,10 @@ export function SettingsPage() {
             <div className="panel-heading">
               <div>
                 <h2>
-                  <Sun size={18} />A different light
+                  <Sun size={18} />
+                  Appearance
                 </h2>
-                <p>Find the view that feels right for your day.</p>
+                <p>Choose light, dark, or your system theme.</p>
               </div>
             </div>
             <div className="theme-options">
@@ -199,9 +199,9 @@ export function SettingsPage() {
               <div>
                 <h2>
                   <Database size={18} />
-                  Keep a little backup
+                  Backup & restore
                 </h2>
-                <p>Your plans deserve a safe copy.</p>
+                <p>Export a copy of your financial records.</p>
               </div>
             </div>
             <div className="setting-row">
@@ -265,7 +265,7 @@ export function SettingsPage() {
             <section className="panel settings-panel">
               <div className="setting-row">
                 <div>
-                  <strong>A fresh look at the demo</strong>
+                  <strong>Demo data</strong>
                   <p>Reset this demo profile to its original sample data.</p>
                 </div>
                 <Button
@@ -284,11 +284,11 @@ export function SettingsPage() {
               <div>
                 <strong>
                   {mode === "cloud"
-                    ? "Delete this cloud profile"
-                    : "Delete this local profile"}
+                    ? "Delete this cloud budget"
+                    : "Delete this guest budget"}
                 </strong>
                 <p>
-                  Permanently remove this profile and its financial records from
+                  Permanently remove this budget and its financial records from{" "}
                   {mode === "cloud" ? "your cloud account." : "this browser."}
                 </p>
               </div>
@@ -298,7 +298,7 @@ export function SettingsPage() {
                 onClick={() => setConfirm("delete")}
               >
                 <Trash2 size={14} />
-                Delete profile
+                Delete budget
               </Button>
             </div>
           </section>
@@ -308,11 +308,7 @@ export function SettingsPage() {
             <span>
               <ShieldCheck size={30} />
             </span>
-            <h2>
-              Your money.
-              <br />
-              Your business.
-            </h2>
+            <h2>Data & privacy</h2>
             <p>
               {mode === "cloud"
                 ? "Your financial records are stored in your Supabase account. A connection is required to load and save changes."
@@ -320,7 +316,7 @@ export function SettingsPage() {
             </p>
             <div>
               <LockKeyhole size={16} />
-              <strong>Local, by design.</strong>
+              <strong>Guest data protection</strong>
             </div>
             <p>
               Local profiles help organize your budgets. They are not
@@ -329,7 +325,7 @@ export function SettingsPage() {
             </p>
             <div>
               <Info size={16} />
-              <strong>A little reminder.</strong>
+              <strong>Browser storage</strong>
             </div>
             <p>
               Clearing browser data can remove your financial records. Private
@@ -339,7 +335,7 @@ export function SettingsPage() {
           <p className="settings-version">
             Spendense · VERSION 1.0
             <br />
-            <span>Make every day count.</span>
+            <span>Personal finance</span>
           </p>
         </aside>
       </div>
@@ -347,9 +343,7 @@ export function SettingsPage() {
       <Dialog
         open={!!backup}
         onClose={() => setBackup(null)}
-        title={
-          exists ? "Replace an existing profile?" : "Bring this profile home?"
-        }
+        title={exists ? "Replace an existing profile?" : "Import this budget?"}
         description="We’ve checked the backup’s format. Review it before importing."
       >
         {backup && (
@@ -446,7 +440,7 @@ export function SettingsPage() {
         title={
           confirm === "reset"
             ? "Start the demo fresh?"
-            : "Delete this profile permanently?"
+            : "Delete this budget permanently?"
         }
         description={
           confirm === "reset"

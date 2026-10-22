@@ -138,6 +138,49 @@ describe("authentication boundaries", () => {
       auth.signUp("you@example.test", "long-password"),
     ).resolves.toEqual({ confirmationRequired: false });
   });
+  it("stores customer names only through Supabase user metadata", async () => {
+    const signUp = vi
+      .fn()
+      .mockResolvedValue({ data: { session: null }, error: null });
+    const updateUser = vi.fn().mockResolvedValue({ error: null });
+    mocks.browser.mockReturnValue({ auth: { signUp, updateUser } });
+    await auth.signUp("alex@example.test", "long-password", "  Alex 王  ");
+    expect(signUp).toHaveBeenCalledWith(
+      expect.objectContaining({
+        options: expect.objectContaining({ data: { full_name: "Alex 王" } }),
+      }),
+    );
+    await auth.updateDisplayName("Élodie 李");
+    expect(updateUser).toHaveBeenCalledWith({
+      data: { full_name: "Élodie 李" },
+    });
+    await expect(auth.updateDisplayName(" ")).rejects.toThrow(/name/);
+    updateUser.mockResolvedValue({ error: { message: "Session expired" } });
+    await expect(auth.updateDisplayName("Alex")).rejects.toThrow(
+      "Session expired",
+    );
+  });
+  it("returns names only from the verified server user", async () => {
+    mocks.server.mockResolvedValue({
+      auth: {
+        getUser: vi
+          .fn()
+          .mockResolvedValue({
+            data: {
+              user: {
+                id: "a",
+                email: "alex@example.test",
+                user_metadata: { full_name: "Alex 王" },
+              },
+            },
+            error: null,
+          }),
+      },
+    });
+    expect(await (await identity()).json()).toEqual({
+      user: { id: "a", email: "alex@example.test", displayName: "Alex 王" },
+    });
+  });
   it("validates credentials before calling Supabase and preserves password whitespace", async () => {
     const signUp = vi.fn(),
       signInWithPassword = vi.fn().mockResolvedValue({ error: null });

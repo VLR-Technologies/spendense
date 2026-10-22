@@ -58,7 +58,7 @@ test("Spendense branding preserves an existing demo profile and financial record
   ).toContainText("₹123.45");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await page.goto("/settings");
-  await expect(page.getByLabel("Profile name", { exact: true })).toHaveValue(
+  await expect(page.getByLabel("Budget name", { exact: true })).toHaveValue(
     "Spendense demo",
   );
   expect(await page.locator("body").innerText()).not.toMatch(/daywise/i);

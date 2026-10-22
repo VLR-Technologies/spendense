@@ -86,6 +86,24 @@ export class LocalRepository
     });
     return profile;
   }
+  /** Atomic across tabs: reuse saved guest/demo budgets without rewriting records. */
+  async openGuestBudget(demo = false) {
+    requireFinancialOperations();
+    return this.database.transaction("rw", this.tables(), async () => {
+      const list = await this.database.profiles.toArray();
+      let selected: string | null = null;
+      try {
+        selected = localAuth.currentLocalProfile();
+      } catch {}
+      const existing =
+        list.find((p) => p.id === selected && p.demo === demo) ??
+        list.find((p) => p.demo === demo);
+      return (
+        existing ??
+        this.createProfile(demo ? "Spendense demo" : "Personal budget", demo)
+      );
+    });
+  }
   async updateProfile(
     profileId: string,
     values: Partial<

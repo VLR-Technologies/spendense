@@ -1,7 +1,10 @@
 "use client";
+import Link from "next/link";
+import { customerName, customerInitial } from "@/lib/identity";
+import { ProfileDialog } from "./forms";
 import { profileDisplayName } from "@/lib/branding";
 import { useEffect, useState, useId } from "react";
-import { Cloud, HardDrive, LogIn, Download, Check, Mail } from "lucide-react";
+import { Cloud, HardDrive, Download, Check, Mail } from "lucide-react";
 import { useApp } from "./provider";
 import { auth } from "@/lib/auth";
 import { accountMigration } from "@/lib/account-migration";
@@ -9,7 +12,13 @@ import { downloadFile } from "@/lib/download";
 import { Button } from "./ui/button";
 import { Dialog } from "./ui/dialog";
 type Review = Awaited<ReturnType<typeof accountMigration.review>>;
-export function AccountControls({ expanded = false }: { expanded?: boolean }) {
+export function AccountControls({
+  expanded = false,
+  landing = false,
+}: {
+  expanded?: boolean;
+  landing?: boolean;
+}) {
   const {
     account,
     mode,
@@ -20,7 +29,15 @@ export function AccountControls({ expanded = false }: { expanded?: boolean }) {
     selectProfile,
     refresh,
     showImportResult,
+    profiles,
+    profile,
+    guestName,
+    setGuestName,
   } = useApp();
+  const identity = customerName(account, guestName, !account && profile?.demo);
+  const [fullName, setFullName] = useState("");
+  const [editName, setEditName] = useState<string | null>(null);
+  const [budgetsOpen, setBudgetsOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const passwordHint = useId();
@@ -71,41 +88,122 @@ export function AccountControls({ expanded = false }: { expanded?: boolean }) {
     <>
       {expanded ? (
         <section className="panel settings-panel account-setting">
-          <div>
-            <h2>
-              {mode === "cloud" ? <Cloud size={18} /> : <HardDrive size={18} />}{" "}
-              {mode === "cloud" ? "Cloud workspace" : "Local workspace"}
-            </h2>
-            <p>
-              {account
-                ? account.email
-                : "Use this device, or sign in to access your plans across devices."}
-            </p>
+          <div className="account-identity">
+            <span className="avatar avatar-large">
+              {customerInitial(identity)}
+            </span>
+            <div>
+              <h2>
+                {account
+                  ? "My Account"
+                  : profile?.demo
+                    ? "Demo Mode"
+                    : "Guest Mode"}
+              </h2>
+              <strong className="identity-name" title={identity}>
+                {identity}
+              </strong>
+              <p>
+                {account?.email ??
+                  (profile?.demo
+                    ? "Sample records stored separately in this browser."
+                    : "Saved in this browser. Guest data is not synchronized.")}
+              </p>
+            </div>
           </div>
-          <Button variant="secondary" size="sm" onClick={() => setOpen(true)}>
-            {account ? "Manage account" : "Sign in"}
+          {(account || !profile?.demo) && (
+            <form
+              className="stack-form"
+              onSubmit={(e) => {
+                e.preventDefault();
+                void run(async () => {
+                  if (account) {
+                    await auth.updateDisplayName(
+                      editName ?? account.displayName ?? "",
+                    );
+                    recheckAccount();
+                  } else {
+                    setGuestName?.(editName ?? guestName ?? "");
+                    setMessage("Preferred name saved.");
+                  }
+                });
+              }}
+            >
+              <label className="field">
+                {account
+                  ? "Customer display name"
+                  : "Preferred guest name (optional)"}
+                <input
+                  autoComplete="name"
+                  value={
+                    editName ??
+                    (account ? (account.displayName ?? "") : (guestName ?? ""))
+                  }
+                  onChange={(e) => setEditName(e.target.value)}
+                  maxLength={200}
+                  required={!!account}
+                />
+              </label>
+              <Button type="submit" variant="secondary" disabled={busy}>
+                {busy ? "Saving…" : "Save display name"}
+              </Button>
+              {error && (
+                <p className="form-error" role="alert">
+                  {error}
+                </p>
+              )}
+              {message && (
+                <p role="status" className="account-success">
+                  {message}
+                </p>
+              )}
+            </form>
+          )}
+          <Button variant="secondary" onClick={() => setOpen(true)}>
+            {account ? "Storage & imports" : "Sign in"}
           </Button>
         </section>
+      ) : landing && !account ? (
+        <div className="auth-actions">
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setEmailFlow("signin");
+              setOpen(true);
+            }}
+          >
+            Sign in
+          </Button>
+          <Button
+            onClick={() => {
+              setEmailFlow("signup");
+              setOpen(true);
+            }}
+          >
+            Create account
+          </Button>
+        </div>
       ) : (
         <button
           className="account-button"
           onClick={() => setOpen(true)}
           aria-label={account ? "Manage account" : "Sign in"}
         >
-          {account ? (
-            mode === "cloud" ? (
-              <Cloud size={16} />
-            ) : (
-              <HardDrive size={16} />
-            )
-          ) : (
-            <LogIn size={16} />
-          )}
-          <span>
-            {account ? (mode === "cloud" ? "Cloud" : "Local") : "Sign in"}
+          <span className="avatar avatar-small" aria-hidden="true">
+            {customerInitial(
+              account ? identity : profile?.demo ? "Demo" : "Guest",
+            )}
+          </span>
+          <span className="account-trigger-name" title={identity}>
+            {account
+              ? identity
+              : profile?.demo
+                ? "Demo · Sign in"
+                : "Guest · Sign in"}
           </span>
         </button>
       )}
+      <ProfileDialog open={budgetsOpen} onClose={() => setBudgetsOpen(false)} />
       <Dialog
         open={open}
         onClose={() => {
@@ -120,13 +218,19 @@ export function AccountControls({ expanded = false }: { expanded?: boolean }) {
           account
             ? signingOut
               ? "Sign out of Spendense?"
-              : "Your account"
-            : "A little clarity, everywhere"
+              : expanded
+                ? "Storage & imports"
+                : "My Account"
+            : emailFlow === "signup"
+              ? "Create your account"
+              : emailFlow === "link"
+                ? "Email sign-in link"
+                : "Sign in to Spendense"
         }
         description={
           account
             ? account.email
-            : "Sign in for cloud storage. Your local profiles stay on this device."
+            : "Access your budgets across devices. Guest records stay separate."
         }
       >
         {(error || authError) && (
@@ -167,7 +271,7 @@ export function AccountControls({ expanded = false }: { expanded?: boolean }) {
                       "Check your inbox for a sign-in link. Open it in this browser.",
                     );
                   } else if (emailFlow === "signup") {
-                    const result = await auth.signUp(email, password);
+                    const result = await auth.signUp(email, password, fullName);
                     setPassword("");
                     if (result.confirmationRequired)
                       setMessage(
@@ -182,6 +286,18 @@ export function AccountControls({ expanded = false }: { expanded?: boolean }) {
                 });
               }}
             >
+              {emailFlow === "signup" && (
+                <label className="field">
+                  Full name
+                  <input
+                    autoComplete="name"
+                    maxLength={200}
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="Your full name"
+                  />
+                </label>
+              )}
               <label className="field">
                 Email address
                 <input
@@ -303,7 +419,44 @@ export function AccountControls({ expanded = false }: { expanded?: boolean }) {
           </div>
         ) : (
           <div className="stack-form">
-            {!review && (
+            {!expanded && (
+              <>
+                <div className="account-identity">
+                  <span className="avatar avatar-large">
+                    {customerInitial(identity)}
+                  </span>
+                  <div>
+                    <strong className="identity-name" title={identity}>
+                      {identity}
+                    </strong>
+                    <p className="account-note">
+                      {mode === "cloud"
+                        ? "Personal finance account"
+                        : "Viewing separate browser records"}
+                    </p>
+                  </div>
+                </div>
+                <Link
+                  className="button button-secondary"
+                  href="/settings"
+                  onClick={() => setOpen(false)}
+                >
+                  My Account & Settings
+                </Link>
+                {profiles.length > 1 && (
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      setOpen(false);
+                      setBudgetsOpen(true);
+                    }}
+                  >
+                    Manage Budgets
+                  </Button>
+                )}
+              </>
+            )}
+            {expanded && !review && (
               <>
                 <div className="workspace-modes" aria-label="Storage mode">
                   {(["local", "cloud"] as const).map((m) => (
@@ -317,18 +470,18 @@ export function AccountControls({ expanded = false }: { expanded?: boolean }) {
                       ) : (
                         <HardDrive size={17} />
                       )}{" "}
-                      {m === "cloud" ? "Cloud" : "Local"}
+                      {m === "cloud" ? "Cloud budgets" : "Guest storage"}
                     </button>
                   ))}
                 </div>
                 <p className="account-note">
                   {mode === "cloud"
-                    ? "Cloud changes need a connection. Each account has its own profiles."
-                    : "Local records stay in this browser. Signing in never uploads them."}
+                    ? "Cloud budgets belong to this account. A connection is required."
+                    : "Guest Mode: these separate records stay in this browser. Signing in never uploads them."}
                 </p>
               </>
             )}
-            {localProfiles.length > 0 && (
+            {expanded && localProfiles.length > 0 && (
               <>
                 {!review && (
                   <>

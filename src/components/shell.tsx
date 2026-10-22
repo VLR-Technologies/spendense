@@ -1,4 +1,7 @@
 "use client";
+import { customerName } from "@/lib/identity";
+import { repository as localRepository } from "@/lib/repositories/local";
+import { CloudRepository } from "@/lib/repositories/cloud";
 import { profileDisplayName } from "@/lib/branding";
 import { Logo } from "./logo";
 import { AccountControls } from "./account";
@@ -17,7 +20,6 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
-  ChevronDown,
   Plus,
   Search,
   Sun,
@@ -27,18 +29,11 @@ import {
   ArrowUpRight,
   ArrowRight,
   Sparkles,
-  Check,
   Wallet,
-  Leaf,
   LockKeyhole,
 } from "lucide-react";
 import { useApp } from "./provider";
-import {
-  ProfileDialog,
-  IncomeForm,
-  CommitmentForm,
-  ExpenseForm,
-} from "./forms";
+import { IncomeForm, CommitmentForm, ExpenseForm } from "./forms";
 import { Button } from "./ui/button";
 import { Dialog } from "./ui/dialog";
 import { monthLabel, shiftMonth, thisMonth } from "@/lib/dates";
@@ -51,81 +46,86 @@ const navigation = [
   { href: "/insights", label: "Insights", icon: ChartNoAxesCombined },
 ];
 function Welcome() {
-  const { repository, mode, act, selectProfile, profiles } = useApp();
-  const [nameMode, setNameMode] = useState(false);
-  const [name, setName] = useState("");
+  const { repository, mode, account, act, selectProfile, guestName } = useApp();
   const [busy, setBusy] = useState(false);
-  async function start(demo = false, displayName = "Personal") {
+  const starting = useRef(false);
+  async function start(demo = false) {
+    if (starting.current) return;
+    starting.current = true;
     setBusy(true);
     await act(async () => {
-      const existing = demo ? profiles.find((p) => p.demo) : undefined;
-      const p =
-        existing ??
-        (await repository.createProfile(
-          demo ? "Spendense demo" : displayName,
-          demo,
-        ));
-      selectProfile(p.id);
+      const budget =
+        mode === "cloud" && repository instanceof CloudRepository
+          ? await repository.openPersonalBudget()
+          : await localRepository.openGuestBudget(demo);
+      selectProfile(budget.id);
     });
+    starting.current = false;
     setBusy(false);
   }
   return (
     <div className="welcome">
       <header>
         <Logo />
-        <span>
+        {account ? (
           <AccountControls />
-        </span>
+        ) : (
+          <span className="welcome-header-label">Personal finance</span>
+        )}
       </header>
       <main id="main-content" className="welcome-main">
         <motion.div
-          initial={{ opacity: 0, y: 15 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           className="welcome-copy"
         >
           <span className="pill">
-            <span className="status-dot" /> A LITTLE MORE CLARITY. EVERY DAY.
+            <span className="status-dot" /> Personal finance, with perspective
           </span>
           <h1>
-            Make every
-            <br />
-            day <span>count.</span>
+            {account ? (
+              <>
+                Welcome, <span>{customerName(account, guestName)}</span>
+              </>
+            ) : (
+              <>
+                A clearer view of
+                <br />
+                <span>your money.</span>
+              </>
+            )}
           </h1>
           <p>
-            Your income. Your commitments. Your everyday.
-            <br />
-            Meet the daily budget that puts it all in perspective.
+            Plan your month. Understand your daily budget. Keep every expense in
+            view.
           </p>
+          {!account && <AccountControls landing />}
           <div className="welcome-actions">
-            <Button disabled={busy} onClick={() => start()} size="default">
-              {mode === "cloud" ? "Create cloud profile" : "Continue as guest"}
+            <Button
+              disabled={busy}
+              variant={account ? "default" : "secondary"}
+              onClick={() => start()}
+            >
+              {account ? "Create budget" : "Continue as guest"}
               <ArrowRight size={18} />
             </Button>
-            <Button
-              disabled={busy || mode === "cloud"}
-              variant="secondary"
-              onClick={() => start(true)}
-            >
-              Try the demo
-              <ArrowUpRight size={17} />
-            </Button>
+            {!account && (
+              <Button
+                disabled={busy}
+                variant="ghost"
+                onClick={() => start(true)}
+              >
+                Try demo
+                <ArrowUpRight size={17} />
+              </Button>
+            )}
           </div>
-          <button className="text-button" onClick={() => setNameMode(true)}>
-            {mode === "cloud"
-              ? "Or name your cloud profile"
-              : "Or create a named local profile"}{" "}
-            <ArrowRight size={14} />
-          </button>
           <div className="welcome-trust">
             <span>
-              <Check size={14} />{" "}
-              {mode === "cloud" ? "Your cloud account" : "No sign-up"}
+              <ShieldCheck size={16} /> No bank connection required
             </span>
             <span>
-              <Check size={14} /> No bank connection
-            </span>
-            <span>
-              <Check size={14} /> Just you
+              <LockKeyhole size={16} /> Guest records stay on this device
             </span>
           </div>
         </motion.div>
@@ -133,89 +133,52 @@ function Welcome() {
           className="welcome-visual"
           aria-label="Spendense sample budget preview"
         >
-          <div className="orb orb-one" />
-          <div className="orb orb-two" />
           <div className="preview-card">
             <div className="preview-card-top">
               <span className="hero-icon">
                 <Wallet size={22} />
               </span>
-              <span>YOUR EVERYDAY, REIMAGINED</span>
-              <Sparkles size={18} />
+              <span>Daily Budget</span>
+              <span className="soft-tag">Sample</span>
             </div>
-            <p>Your daily spending allowance</p>
+            <p>Available per day</p>
             <strong>
               ₹2,700<span>.00</span>
             </strong>
             <div className="sample-tag">
-              Sample · ₹1,00,000 income · 30-day month
+              Illustrative example · 30-day month
             </div>
             <div className="preview-line" />
             <div className="preview-row">
-              <span>Monthly commitments</span>
+              <span>Monthly income allocation</span>
+              <b>₹1,00,000</b>
+            </div>
+            <div className="preview-row">
+              <span>Fixed commitments</span>
               <b>₹19,000</b>
             </div>
             <div className="preview-row">
-              <span>A coffee, lunch & a metro ride</span>
-              <b>− ₹500</b>
+              <span>Daily expenses</span>
+              <b>₹500</b>
             </div>
             <div className="preview-remaining">
-              <span>A little room to breathe.</span>
+              <span>Remaining Today</span>
               <strong>
                 ₹2,200 <ArrowUpRight size={17} />
               </strong>
             </div>
-          </div>
-          <div className="floating-note">
-            <span>
-              <Leaf size={20} />
-            </span>
-            <div>
-              Small choices.
-              <br />
-              <strong>A bigger picture.</strong>
-            </div>
+            <p className="sample-disclaimer">
+              Budget allocation, not a bank balance.
+            </p>
           </div>
         </div>
       </main>
       <footer>
-        <span>Made for your life. Not your login.</span>
+        <span>Spendense · Personal finance</span>
         <span>
-          {mode === "cloud"
-            ? "Cloud profiles belong to your account. Local profiles stay on this device."
-            : "Your data stays in this browser. Export a backup to keep it safe."}
+          Guest data stays in this browser. Export backups to keep it safe.
         </span>
       </footer>
-      <Dialog
-        open={nameMode}
-        onClose={() => setNameMode(false)}
-        title="Make it yours"
-        description="A name is all you need. No email or password."
-      >
-        <form
-          className="stack-form"
-          onSubmit={(e) => {
-            e.preventDefault();
-            start(false, name);
-          }}
-        >
-          <label className="field">
-            Profile name
-            <input
-              autoFocus
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              maxLength={50}
-              placeholder="e.g. Personal, Student, Family"
-            />
-          </label>
-          <Button type="submit" disabled={busy}>
-            Create local profile
-            <ArrowRight size={16} />
-          </Button>
-        </form>
-      </Dialog>
     </div>
   );
 }
@@ -241,12 +204,12 @@ function Onboarding() {
         open
         title={
           step === 1
-            ? "Let’s give your money a little direction."
+            ? "Set your monthly income"
             : step === 2
-              ? "Make room for the essentials."
-              : "Your days, with a little more clarity."
+              ? "Add fixed commitments"
+              : "Review your daily budget"
         }
-        description={`YOUR Spendense SETUP · STEP ${step} OF 3`}
+        description={`Budget setup · Step ${step} of 3`}
         onClose={() => finish()}
       >
         <div className="onboarding-progress">
@@ -285,9 +248,8 @@ function Onboarding() {
             <p>Your daily spending allowance</p>
             <strong>{money(summarize(data).averageAllowance, true)}</strong>
             <p className="muted">
-              After your commitments, before your everyday.
-              <br />
-              You can change your plan whenever life changes.
+              Monthly income allocation minus commitments, divided across the
+              month.
             </p>
             <Button onClick={() => finish(true)}>
               Open my calendar
@@ -329,7 +291,6 @@ export function AppShell({ children }: { children: ReactNode }) {
   const path = usePathname();
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
-  const [profilesOpen, setProfilesOpen] = useState(false);
   const [expenseOpen, setExpenseOpen] = useState(false);
   const [search, setSearch] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
@@ -347,7 +308,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     return (
       <div className="app-loading">
         <Logo />
-        <span className="loading-dots">Getting your day ready…</span>
+        <span className="loading-dots">Loading your budget…</span>
       </div>
     );
   if (error && !profile)
@@ -358,10 +319,26 @@ export function AppShell({ children }: { children: ReactNode }) {
         <Button onClick={refresh}>Try again</Button>
         {mode === "cloud" && (
           <Button variant="secondary" onClick={() => switchMode("local")}>
-            Use Local
+            Open guest storage
           </Button>
         )}
         <AccountControls />
+      </div>
+    );
+  if (!profileId && path === "/settings")
+    return (
+      <div className="welcome">
+        <header>
+          <Logo />
+          <AccountControls />
+        </header>
+        <main id="main-content" className="empty-account-settings">
+          <h1>Account Settings</h1>
+          <AccountControls expanded />
+          <Button asChild variant="secondary">
+            <Link href="/dashboard">Back to budgets</Link>
+          </Button>
+        </main>
       </div>
     );
   if (!profileId)
@@ -374,7 +351,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     return (
       <div className="app-loading">
         <Logo />
-        <p>Opening your local profile…</p>
+        <p>Opening your budget…</p>
         <Button
           variant="secondary"
           onClick={() => {
@@ -393,7 +370,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Link href="/dashboard" aria-label="Spendense home">
             <Logo compact={collapsed} />
           </Link>
-          <span className="nav-label">YOUR WORKSPACE</span>
+          <span className="nav-label">Personal finance</span>
           <nav aria-label="Main navigation">
             {navigation.map((n) => (
               <Link
@@ -414,26 +391,6 @@ export function AppShell({ children }: { children: ReactNode }) {
             ))}
           </nav>
           <div className="sidebar-bottom">
-            <div className="privacy-card">
-              <div>
-                <ShieldCheck size={21} />
-                <span className="privacy-dot" />
-              </div>
-              <strong>
-                Your money.
-                <br />
-                Your business.
-              </strong>
-              <p>
-                {mode === "cloud"
-                  ? "Your cloud account. Your private workspace."
-                  : "Everything stays on your device. Just as it should."}
-              </p>
-              <Link href="/settings">
-                About your data
-                <ArrowUpRight size={14} />
-              </Link>
-            </div>
             <Link
               href="/settings"
               className={`nav-item ${path === "/settings" ? "active" : ""}`}
@@ -466,23 +423,21 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </button>
               ))}
             </div>
-            <button
-              className="sidebar-profile"
-              onClick={() => setProfilesOpen(true)}
-            >
-              <span className="avatar">{profileDisplayName(profile)[0]}</span>
+            <div className="sidebar-budget">
+              <Wallet size={18} />
               <span>
-                <strong>{profileDisplayName(profile)}</strong>
+                <strong title={profileDisplayName(profile)}>
+                  {profileDisplayName(profile)}
+                </strong>
                 <small>
-                  {mode === "cloud"
-                    ? "Cloud workspace"
-                    : profile.demo
-                      ? "Demo workspace"
-                      : "Local workspace"}
+                  {profile.demo
+                    ? "Demo budget"
+                    : mode === "cloud"
+                      ? "Account budget"
+                      : "Guest budget · this device"}
                 </small>
               </span>
-              <ChevronDown size={15} />
-            </button>
+            </div>
           </div>
           <button
             className="collapse-button"
@@ -498,8 +453,15 @@ export function AppShell({ children }: { children: ReactNode }) {
         </aside>
         <div className="main-wrap">
           <header className="topbar">
+            <Link
+              className="mobile-brand"
+              href="/dashboard"
+              aria-label="Spendense home"
+            >
+              <Logo />
+            </Link>
             <div className="breadcrumb">
-              Your workspace
+              Personal finance
               <ChevronRight size={13} />
               <strong>
                 {navigation.find((n) => path === n.href)?.label ??
@@ -524,19 +486,10 @@ export function AppShell({ children }: { children: ReactNode }) {
               <kbd>⌘ K</kbd>
             </form>
             <div className="topbar-right">
+              {mode === "local" && !profile.demo && (
+                <span className="local-badge">Guest Mode</span>
+              )}
               <AccountControls />
-              {profile.demo && <span className="demo-badge">DEMO</span>}
-              <span className="local-badge">
-                <span className="status-dot" />{" "}
-                {mode === "cloud" ? "Cloud workspace" : "Saved on this device"}
-              </span>
-              <button
-                className="avatar avatar-small"
-                aria-label="Switch profile"
-                onClick={() => setProfilesOpen(true)}
-              >
-                {profileDisplayName(profile)[0]}
-              </button>
             </div>
           </header>
           <main id="main-content" className="main-content">
@@ -548,17 +501,6 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </Button>
               </div>
             )}
-            <div className="mobile-top">
-              <Logo />
-              <AccountControls />
-              <button
-                className="avatar avatar-small"
-                aria-label="Switch local profile"
-                onClick={() => setProfilesOpen(true)}
-              >
-                {profileDisplayName(profile)[0]}
-              </button>
-            </div>
             <div className="page-toolbar">
               <div className="month-switcher">
                 <button
@@ -618,12 +560,14 @@ export function AppShell({ children }: { children: ReactNode }) {
               children
             )}
             <footer className="app-footer">
+              <span className="footer-logo">Spendense.</span>
               <span>
-                <span className="footer-logo">Spendense.</span> Make every day
-                count.
-              </span>
-              <span>
-                <LockKeyhole size={12} /> A little clarity. All yours.
+                <LockKeyhole size={14} />
+                {mode === "cloud"
+                  ? "Account budget"
+                  : profile.demo
+                    ? "Demo · sample data"
+                    : "Guest Mode · saved on this device"}
               </span>
             </footer>
           </main>
@@ -656,10 +600,6 @@ export function AppShell({ children }: { children: ReactNode }) {
           ))}
         </nav>
       </div>
-      <ProfileDialog
-        open={profilesOpen}
-        onClose={() => setProfilesOpen(false)}
-      />
       <Dialog
         open={expenseOpen}
         onClose={() => setExpenseOpen(false)}

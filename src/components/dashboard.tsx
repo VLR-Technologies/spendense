@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { customerName } from "@/lib/identity";
 import { useState } from "react";
 import {
   ArrowUpRight,
@@ -18,7 +19,15 @@ import { monthLabel } from "@/lib/dates";
 import { Dialog } from "./ui/dialog";
 import { MonthlyBudgetBreakdown } from "./budget-breakdown";
 export function Dashboard() {
-  const { data, month } = useApp();
+  const { data, month, account, mode, profile, guestName } = useApp();
+  const identity = customerName(
+    mode === "cloud" ? account : null,
+    guestName,
+    profile?.demo,
+  );
+  const hour = new Date().getHours();
+  const greeting =
+    hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
   const [incomeOpen, setIncomeOpen] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
   if (!data) return <PageLoading />;
@@ -40,11 +49,17 @@ export function Dashboard() {
     <>
       <div className="page-heading">
         <div>
-          <h1>
-            A good day starts here<span className="heading-dot">.</span>
+          <h1 className="customer-greeting" title={`${greeting}, ${identity}`}>
+            {greeting}, {identity}
           </h1>
           <p>
-            Your allowance, spending, and what’s left for {monthLabel(month)}.
+            Your Financial Overview <span aria-hidden="true">·</span>{" "}
+            {monthLabel(month)}
+            {profile?.demo
+              ? " · Demo data"
+              : mode === "local"
+                ? " · Guest Mode"
+                : ""}
           </p>
         </div>
       </div>
@@ -55,11 +70,24 @@ export function Dashboard() {
               <Wallet size={21} />
             </span>
             <span>
-              {active ? "TODAY’S DAILY ALLOWANCE" : "DAILY ALLOWANCE · AVERAGE"}
+              <span
+                className="hero-customer"
+                title={`${identity}’s Daily Budget`}
+              >
+                {identity}’s Daily Budget
+              </span>
             </span>
             <span className="hero-sparkle">
               <Sparkles size={19} />
             </span>
+          </div>
+          <div className="hero-context">
+            {active
+              ? new Date(`${active.date}T12:00:00`).toLocaleDateString(
+                  "en-GB",
+                  { day: "numeric", month: "long", weekday: "long" },
+                )
+              : `${monthLabel(month)} · Daily average`}
           </div>
           <div className="hero-amount">
             <AnimatedMoney value={daily} exact />
@@ -67,23 +95,19 @@ export function Dashboard() {
           </div>
           <p>
             {active
-              ? "Your allocation after fixed deductions."
+              ? "Daily allocation after fixed commitments."
               : `Average across ${s.days.length} days. Select a day for its exact allowance.`}
           </p>
           {!active && <span className="hero-period-note">Monthly totals</span>}
           <div className="hero-bottom">
             <div>
               <span>
-                {active
-                  ? "− Daily expenses today"
-                  : "Daily expenses this month"}
+                {active ? "Daily Spending" : "Daily expenses this month"}
               </span>
               <strong>{money(active?.spent ?? s.spent)}</strong>
             </div>
             <div>
-              <span>
-                {active ? "= Remaining today" : "Remaining this month"}
-              </span>
+              <span>{active ? "Remaining Today" : "Remaining this month"}</span>
               <strong>{preciseMoney(active?.remaining ?? s.remaining)}</strong>
             </div>
             <button
@@ -158,48 +182,6 @@ export function Dashboard() {
           </div>
         </div>
       </div>
-      <div className="dashboard-charts">
-        <section className="panel">
-          <div className="panel-heading">
-            <div>
-              <h2>Daily remaining amounts </h2>
-              <p>Your daily allowance, minus your daily spending.</p>
-            </div>
-            <Link href="/insights" className="text-link">
-              View insights
-              <ArrowUpRight size={15} />
-            </Link>
-          </div>
-          <DailyChart days={s.elapsed} />
-          <div className="chart-footer">
-            <span>
-              <i className="purple-dot" />
-              Daily unspent amount
-            </span>
-            <span>
-              {s.overBudget
-                ? `${s.overBudget} ${s.overBudget === 1 ? "day" : "days"} over budget`
-                : "Within elapsed allowance"}
-            </span>
-          </div>
-        </section>
-        <section className="panel">
-          <div className="panel-heading">
-            <div>
-              <h2>Spending by category</h2>
-              <p>Daily expenses recorded this month.</p>
-            </div>
-            <span className="panel-mini-icon">
-              <ArrowUpRight size={17} />
-            </span>
-          </div>
-          <CategoryChart categories={s.categories} />
-          <div className="category-total">
-            <span>Total monthly spending</span>
-            <strong>{money(s.spent)}</strong>
-          </div>
-        </section>
-      </div>
       <div className="dashboard-bottom">
         <section className="panel calendar-panel">
           <div className="panel-heading">
@@ -243,7 +225,7 @@ export function Dashboard() {
         <section className="panel recent-panel">
           <div className="panel-heading">
             <div>
-              <h2>Recent expenses</h2>
+              <h2>Recent Transactions</h2>
             </div>
             <Link
               href="/expenses"
@@ -272,10 +254,10 @@ export function Dashboard() {
             <div>
               <strong>
                 {spentPercent === null
-                  ? "Your plan, your pace."
+                  ? "Spending pace"
                   : spentPercent <= 100
-                    ? "A little room to breathe."
-                    : "A moment to check your pace."}
+                    ? "Within allocated budget"
+                    : "Above allocated budget"}
               </strong>
               <p>
                 {spentPercent === null
@@ -283,6 +265,48 @@ export function Dashboard() {
                   : `${spentPercent}% of your elapsed allowance spent. Based on the expenses you’ve recorded.`}
               </p>
             </div>
+          </div>
+        </section>
+      </div>
+      <div className="dashboard-charts">
+        <section className="panel">
+          <div className="panel-heading">
+            <div>
+              <h2>Daily remaining allocation</h2>
+              <p>Your daily allowance, minus your daily spending.</p>
+            </div>
+            <Link href="/insights" className="text-link">
+              View insights
+              <ArrowUpRight size={15} />
+            </Link>
+          </div>
+          <DailyChart days={s.elapsed} />
+          <div className="chart-footer">
+            <span>
+              <i className="purple-dot" />
+              Daily unspent amount
+            </span>
+            <span>
+              {s.overBudget
+                ? `${s.overBudget} ${s.overBudget === 1 ? "day" : "days"} over budget`
+                : "Within elapsed allowance"}
+            </span>
+          </div>
+        </section>
+        <section className="panel">
+          <div className="panel-heading">
+            <div>
+              <h2>Spending by category</h2>
+              <p>Daily expenses recorded this month.</p>
+            </div>
+            <span className="panel-mini-icon">
+              <ArrowUpRight size={17} />
+            </span>
+          </div>
+          <CategoryChart categories={s.categories} />
+          <div className="category-total">
+            <span>Total monthly spending</span>
+            <strong>{money(s.spent)}</strong>
           </div>
         </section>
       </div>

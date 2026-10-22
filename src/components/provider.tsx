@@ -54,6 +54,8 @@ type AppContextValue = {
   switchMode: (mode: Mode) => void;
   recheckAccount: () => void;
   authError: string;
+  guestName: string;
+  setGuestName: (name: string) => void;
   categories: Category[];
   history: Backup | null;
   showImportResult: (result: ImportResult) => void;
@@ -131,6 +133,15 @@ function ActiveAppProvider({ children }: { children: ReactNode }) {
         <span>Opening your workspace…</span>
       </div>
     );
+  if (authError)
+    return (
+      <main className="app-loading" id="main-content">
+        <strong>Spendense.</strong>
+        <h1>Unable to verify your account</h1>
+        <p role="alert">{authError}</p>
+        <Button onClick={recheckAccount}>Retry connection</Button>
+      </main>
+    );
   return (
     <WorkspaceProvider
       key={`${account?.id ?? "guest"}:${mode}`}
@@ -155,6 +166,21 @@ function WorkspaceProvider({
   recheckAccount: () => void;
   authError: string;
 }) {
+  const [guestName, updateGuestName] = useState("");
+  useEffect(() => {
+    void Promise.resolve().then(() => {
+      try {
+        updateGuestName(localStorage.getItem("daywise-guest-name") ?? "");
+      } catch {}
+    });
+  }, []);
+  const setGuestName = (name: string) => {
+    const value = name.trim().slice(0, 200);
+    try {
+      localStorage.setItem("daywise-guest-name", value);
+    } catch {}
+    updateGuestName(value);
+  };
   const localProfiles = useLiveQuery(
     () => db.profiles.toArray().catch(() => []),
     [],
@@ -162,9 +188,12 @@ function WorkspaceProvider({
   );
   const repository = useMemo<DaywiseRepository>(() => {
     const client = mode === "cloud" ? browserClient() : null;
-    return client && account
-      ? new CloudRepository(client, account.id)
-      : localRepository;
+    if (mode === "cloud") {
+      if (!client || !account)
+        throw new Error("Cloud authentication is unavailable. Retry sign-in.");
+      return new CloudRepository(client, account.id);
+    }
+    return localRepository;
   }, [mode, account]);
   const [cloudProfiles, setCloudProfiles] = useState<Profile[]>([]);
   const profiles = mode === "local" ? localProfiles : cloudProfiles;
@@ -199,11 +228,19 @@ function WorkspaceProvider({
           const list = await repository.profiles();
           if (cancelled) return;
           setCloudProfiles(list);
-          setProfileId((current) =>
-            list.some((p) => p.id === current)
-              ? current
-              : (list[0]?.id ?? null),
-          );
+          let remembered: string | null = null;
+          try {
+            remembered = sessionStorage.getItem(
+              `daywise-cloud-budget:${account?.id}`,
+            );
+          } catch {}
+          setProfileId((current) => {
+            const selected = current ?? remembered;
+            // A remembered ID is a preference, never authorization. Only this owner's list is eligible.
+            return list.some((p) => p.id === selected)
+              ? selected
+              : (list[0]?.id ?? null);
+          });
           setReady(true);
           setError("");
         }
@@ -224,7 +261,7 @@ function WorkspaceProvider({
     return () => {
       cancelled = true;
     };
-  }, [mode, repository, revision]);
+  }, [mode, repository, revision, account?.id]);
   useEffect(() => {
     if (!profileId) return;
     let cancelled = false;
@@ -304,8 +341,12 @@ function WorkspaceProvider({
             true,
           );
         }
+      else if (account)
+        try {
+          sessionStorage.setItem(`daywise-cloud-budget:${account.id}`, id);
+        } catch {}
     },
-    [mode, notify],
+    [mode, notify, account],
   );
   const act = useCallback(
     async (action: () => Promise<unknown>, success?: string) => {
@@ -358,6 +399,8 @@ function WorkspaceProvider({
         switchMode,
         recheckAccount,
         authError,
+        guestName,
+        setGuestName,
       }}
     >
       {children}

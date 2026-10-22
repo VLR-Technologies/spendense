@@ -10,18 +10,14 @@ test("guest-first complete local finance journey", async ({
   test.setTimeout(120000);
   await page.goto("/");
   await expect(
-    page.getByRole("heading", { name: /Make every.*day count/ }),
+    page.getByRole("heading", { name: /A clearer view of.*your money/ }),
   ).toBeVisible();
   await page
-    .getByRole("button", { name: "Or create a named local profile" })
-    .click();
-  await page.getByLabel("Profile name", { exact: true }).fill("Personal test");
-  await page
-    .getByRole("button", { name: "Create local profile", exact: true })
+    .getByRole("button", { name: "Continue as guest", exact: true })
     .click();
   await expect(
     page.getByRole("heading", {
-      name: "Let’s give your money a little direction.",
+      name: "Set your monthly income",
     }),
   ).toBeVisible();
   await page
@@ -49,9 +45,7 @@ test("guest-first complete local finance journey", async ({
   await dialog.getByRole("button", { name: "Save commitment" }).click();
   await page.getByRole("button", { name: "See my daily allowance" }).click();
   await page.getByRole("button", { name: "Open my calendar" }).click();
-  await expect(
-    page.getByRole("heading", { name: "Your daily picture." }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Calendar" })).toBeVisible();
   const firstDay = page.locator(".full-calendar [data-date]").first();
   const date = (await firstDay.getAttribute("data-date"))!;
   const allowance =
@@ -132,14 +126,14 @@ test("guest-first complete local finance journey", async ({
   ).toBeVisible();
   await page.getByRole("button", { name: "Replace & restore profile" }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
-  await page.getByRole("button", { name: "Manage profiles" }).click();
-  await page.getByLabel("Create a new profile").fill("Student test");
+  await page.getByRole("button", { name: "Manage Budgets" }).click();
+  await page.getByLabel("Create a new budget").fill("Student test");
   await page
-    .getByRole("button", { name: "Create local profile", exact: true })
+    .getByRole("button", { name: "Create guest budget", exact: true })
     .click();
   await page.getByRole("button", { name: "Skip setup for now" }).click();
   await go(page, "/expenses");
-  await expect(page.getByText("A clean slate for your everyday")).toBeVisible();
+  await expect(page.getByText("No expenses recorded")).toBeVisible();
   expect(
     await page
       .locator("body")
@@ -154,9 +148,11 @@ test("demo dashboard, all views, and responsive screenshots", async ({
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/");
-  await page.getByRole("button", { name: "Try the demo" }).click();
+  await page.getByRole("button", { name: "Try demo" }).click();
   await expect(
-    page.getByRole("heading", { name: "A good day starts here." }),
+    page.getByRole("heading", {
+      name: /Good (morning|afternoon|evening), Demo/,
+    }),
   ).toBeVisible();
   await expect(page.locator(".hero-amount")).toContainText("₹");
   await expect(page.locator(".expense-rows").first()).toBeVisible();
@@ -207,7 +203,9 @@ test("guest can skip setup and start from an empty budget", async ({
     .click();
   await page.getByRole("button", { name: "Skip setup for now" }).click();
   await expect(
-    page.getByRole("heading", { name: "A good day starts here." }),
+    page.getByRole("heading", {
+      name: /Good (morning|afternoon|evening), Guest/,
+    }),
   ).toBeVisible();
   await expect(page.locator(".summary-value").first()).toHaveText("₹0");
   await go(page, "/settings");
@@ -226,9 +224,11 @@ test("monthly commitments support one-time conversion, pause, resume and payment
   page,
 }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Try the demo" }).click();
+  await page.getByRole("button", { name: "Try demo" }).click();
   await expect(
-    page.getByRole("heading", { name: "A good day starts here." }),
+    page.getByRole("heading", {
+      name: /Good (morning|afternoon|evening), Demo/,
+    }),
   ).toBeVisible();
   await go(page, "/monthly-plan");
   const before = await page

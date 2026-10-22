@@ -402,9 +402,7 @@ export function CalendarPage() {
     <>
       <div className="page-heading">
         <div>
-          <h1>
-            Your daily picture<span className="heading-dot">.</span>
-          </h1>
+          <h1>Calendar</h1>
           <p>Daily allowance − daily expenses = remaining amount.</p>
         </div>
         <div className="heading-stat">

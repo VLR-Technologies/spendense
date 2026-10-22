@@ -1,3 +1,4 @@
+import { cleanDisplayName } from "@/lib/identity";
 import { serverClient } from "@/lib/supabase/server";
 import { financialOperationsEnabled } from "@/lib/deployment";
 export async function GET() {
@@ -29,7 +30,25 @@ export async function GET() {
       },
     );
   return Response.json(
-    { user: data.user ? { id: data.user.id, email: data.user.email } : null },
+    {
+      user: data.user
+        ? {
+            id: data.user.id,
+            email: data.user.email,
+            ...(cleanDisplayName(
+              data.user.user_metadata?.full_name ??
+                data.user.user_metadata?.name,
+            )
+              ? {
+                  displayName: cleanDisplayName(
+                    data.user.user_metadata?.full_name ??
+                      data.user.user_metadata?.name,
+                  ),
+                }
+              : {}),
+          }
+        : null,
+    },
     { headers },
   );
 }

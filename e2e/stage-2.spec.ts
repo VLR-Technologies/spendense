@@ -4,9 +4,11 @@ import fs from "node:fs/promises";
 async function demo(page: Page) {
   await page.clock.setFixedTime(new Date("2026-10-22T12:00:00+02:00"));
   await page.goto("/");
-  await page.getByRole("button", { name: "Try the demo", exact: true }).click();
+  await page.getByRole("button", { name: "Try demo", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "A good day starts here." }),
+    page.getByRole("heading", {
+      name: /Good (morning|afternoon|evening), Demo/,
+    }),
   ).toBeVisible();
 }
 async function go(page: Page, path: string) {
@@ -283,7 +285,7 @@ test("Stage 2 reads existing v1 history and recurring data without rewriting sav
   await page.clock.setFixedTime(new Date("2026-10-22T12:00:00+02:00"));
   await page.goto("/");
   await expect(
-    page.getByRole("button", { name: "Try the demo", exact: true }),
+    page.getByRole("button", { name: "Try demo", exact: true }),
   ).toBeVisible();
   const profileId = "stage-1-profile";
   const createdAt = "2026-09-01T10:00:00.000Z";

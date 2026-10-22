@@ -76,11 +76,8 @@ export function ExpensesPage() {
     <>
       <div className="page-heading">
         <div>
-          <span className="eyebrow">THE LITTLE THINGS ADD UP</span>
-          <h1>
-            Your everyday, accounted for<span className="heading-dot">.</span>
-          </h1>
-          <p>A coffee, a commute, a good meal. A clearer picture of it all.</p>
+          <h1>Expenses</h1>
+          <p>Search, review, and manage recorded transactions.</p>
         </div>
         <Button variant="secondary" onClick={csv}>
           <ArrowDownToLine size={16} />
@@ -192,7 +189,7 @@ export function ExpensesPage() {
             title={
               data.expenses.length
                 ? "Nothing matches just yet"
-                : "A clean slate for your everyday"
+                : "No expenses recorded"
             }
             description={
               data.expenses.length

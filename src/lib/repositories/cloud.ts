@@ -99,6 +99,39 @@ export class CloudRepository implements DaywiseRepository {
     if (error) throw cloudError(error);
     return profile;
   }
+  /** Only an explicit first-budget action calls this. Stable ID makes retries safe. */
+  async openPersonalBudget() {
+    const existing = await this.profiles();
+    if (existing.length) return existing[0];
+    const digest = new Uint8Array(
+      await crypto.subtle.digest(
+        "SHA-256",
+        new TextEncoder().encode(`spendense:personal-budget:${this.owner}`),
+      ),
+    );
+    digest[6] = (digest[6] & 15) | 80;
+    digest[8] = (digest[8] & 63) | 128;
+    const hex = Array.from(digest.slice(0, 16), (b) =>
+      b.toString(16).padStart(2, "0"),
+    ).join("");
+    const id = `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+    const profile = profileSchema.parse({
+      id,
+      displayName: "Personal budget",
+      createdAt: new Date().toISOString(),
+      demo: false,
+      theme: "light",
+      onboardingComplete: false,
+    });
+    const { error } = await this.client
+      .from("profiles")
+      .insert({ ...profile, owner_id: this.owner });
+    if (error && error.code !== "23505") throw cloudError(error);
+    const list = await this.profiles();
+    const saved = list.find((p) => p.id === id) ?? list[0];
+    if (!saved) throw new Error("Unable to open your budget. Please retry.");
+    return saved;
+  }
   async updateProfile(
     id: string,
     values: Partial<

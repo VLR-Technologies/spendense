@@ -11,9 +11,9 @@ import {
 import fs from "node:fs/promises";
 const cloud = process.env.DAYWISE_CLOUD_TEST === "1";
 async function account(page: Page) {
+  await page.goto("/settings");
   await page
-    .getByRole("button", { name: "Manage account", exact: true })
-    .first()
+    .getByRole("button", { name: "Storage & imports", exact: true })
     .click();
 }
 async function signIn(page: Page, request: APIRequestContext, email: string) {
@@ -91,9 +91,11 @@ test("optional sign-in preserves guest access and reports missing configuration"
   await page
     .getByRole("button", { name: "Continue as guest", exact: true })
     .click();
-  await page.getByRole("button", { name: "Try the demo", exact: true }).click();
+  await page.getByRole("button", { name: "Try demo", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "A good day starts here." }),
+    page.getByRole("heading", {
+      name: /Good (morning|afternoon|evening), Demo/,
+    }),
   ).toBeVisible();
   await page.reload();
   await expect(
@@ -121,7 +123,7 @@ test("expired callback provides an actionable sign-in error", async ({
     .getByRole("button", { name: "Continue as guest", exact: true })
     .click();
   await expect(
-    page.getByRole("button", { name: "Try the demo", exact: true }),
+    page.getByRole("button", { name: "Try demo", exact: true }),
   ).toBeVisible();
 });
 test("local email authentication, consented import, retry, account isolation, refresh and cross-device persistence", async ({
@@ -135,13 +137,13 @@ test("local email authentication, consented import, retry, account isolation, re
   test.setTimeout(180000);
   const email = `daywise-${info.project.name}-${Date.now()}@example.test`;
   await page.goto("/");
-  await page.getByRole("button", { name: "Try the demo", exact: true }).click();
+  await page.getByRole("button", { name: "Try demo", exact: true }).click();
   await expect(
     page.getByRole("region", { name: "Monthly budget calculation" }),
   ).toContainText("₹81,000");
   await signIn(page, request, email);
   await expect(
-    page.getByRole("button", { name: "Create cloud profile", exact: true }),
+    page.getByRole("button", { name: "Create budget", exact: true }),
   ).toBeVisible();
   // No automatic upload, even after a real email login.
   await account(page);
@@ -171,6 +173,7 @@ test("local email authentication, consented import, retry, account isolation, re
   ).toBeVisible();
   await screenshot(page, `${info.project.name}-migration-result`);
   await page.getByRole("button", { name: "Done", exact: true }).click();
+  await page.goto("/dashboard");
   await expect(
     page.getByRole("region", { name: "Monthly budget calculation" }),
   ).toContainText("₹81,000");
@@ -297,9 +300,7 @@ test("local email authentication, consented import, retry, account isolation, re
     },
   ]);
   await page.reload();
-  await expect(
-    page.getByRole("heading", { name: "Make yourself at home." }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Settings" })).toBeVisible();
   const renewed = await page.context().cookies();
   expect(renewed.find((c) => c.name === sessionCookie!.name)?.value).not.toBe(
     `base64-${Buffer.from(JSON.stringify(stored)).toString("base64url")}`,
@@ -322,13 +323,14 @@ test("local email authentication, consented import, retry, account isolation, re
   await expect(
     page.getByRole("button", { name: "Sign in", exact: true }).first(),
   ).toBeVisible();
+  await page.goto("/dashboard");
   // Local data survived the import and logout.
   await expect(
     page.getByRole("region", { name: "Monthly budget calculation" }),
   ).toContainText("₹81,000");
   await signIn(page, request, `other-${email}`);
   await expect(
-    page.getByRole("button", { name: "Create cloud profile", exact: true }),
+    page.getByRole("button", { name: "Create budget", exact: true }),
   ).toBeVisible();
   await expect(
     page.getByRole("region", { name: "Monthly budget calculation" }),

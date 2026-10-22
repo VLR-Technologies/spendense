@@ -1,0 +1,91 @@
+Spendense UI upgrade — final verification
+Date: 22 October 2026
+Branch: UI-upgrade
+All browsers and financial fixtures were isolated; cloud tests used localhost Supabase only.
+
+PASS: npm run check:secrets
+> spendense@1.0.0 check:secrets
+> node scripts/check-secrets.mjs
+
+Credential check passed (Git tracked/unignored files). Local env contents were not printed.
+
+PASS: npm run lint
+> spendense@1.0.0 lint
+> eslint .
+
+PASS: npm run typecheck
+> spendense@1.0.0 typecheck
+> next typegen && tsc --noEmit
+
+Generating route types...
+✓ Types generated successfully
+
+PASS: npm test
+
+
+ Test Files  10 passed (10)
+      Tests  95 passed (95)
+   Start at  23:29:09
+   Duration  35.17s (transform 1.37s, setup 3.22s, import 15.51s, tests 3.90s, environment 9.89s)
+
+PASS: npm run build
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+PASS: npm run test:e2e
+  -  30 [mobile] › e2e/stage-3.spec.ts:129:5 › local email authentication, consented import, retry, account isolation, refresh and cross-device persistence
+  ✓  31 [mobile] › e2e/ui-upgrade.spec.ts:3:5 › prominent authentication, explicit guest identity, and stable guest entry (3.8s)
+  ✓  32 [mobile] › e2e/ui-upgrade.spec.ts:87:5 › responsive visual hierarchy, themes and large amounts (12.1s)
+
+  5 skipped
+  27 passed (3.1m)
+
+PASS: npm run test:cloud
+  ✓  30 [mobile] › e2e/stage-3.spec.ts:129:5 › local email authentication, consented import, retry, account isolation, refresh and cross-device persistence (52.5s)
+  ✓  31 [mobile] › e2e/ui-upgrade.spec.ts:3:5 › prominent authentication, explicit guest identity, and stable guest entry (11.7s)
+  ✓  32 [mobile] › e2e/ui-upgrade.spec.ts:87:5 › responsive visual hierarchy, themes and large amounts (29.8s)
+
+  3 skipped
+  29 passed (7.6m)
+
+PASS: npm run test:deployment (maintenance)
+  ✓  1 [desktop] › e2e/deployment.spec.ts:3:5 › locked Spendense routes never open records, authenticate, or show sample money (5.1s)
+(node:15554) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 [mobile] › e2e/deployment.spec.ts:3:5 › locked Spendense routes never open records, authenticate, or show sample money (2.5s)
+
+  2 passed (13.2s)
+
+PASS: SPENDENSE_TEST_APP_MODE=staging npm run test:deployment (local locked-mode fixture)
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+(node:15719) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 [mobile] › e2e/deployment.spec.ts:3:5 › locked Spendense routes never open records, authenticate, or show sample money (2.5s)
+
+  2 passed (14.0s)
+
+PASS: npm run db:test
+/Users/likhithreddy/Documents/daywise/supabase/tests/database/payment_state.test.sql ... ok
+psql:/Users/likhithreddy/Documents/daywise/supabase/tests/database/rls.test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/Users/likhithreddy/Documents/daywise/supabase/tests/database/rls.test.sql ............. ok
+All tests successful.
+Files=3, Tests=131,  0 wallclock secs ( 0.02 usr  0.03 sys +  0.10 cusr  0.03 csys =  0.18 CPU)
+Result: PASS
+
+PASS: node scripts/capture-ui.mjs after
+35 route/theme/width combinations have no horizontal overflow.
+Five saved budget equations exactly match their before screenshots.
+See docs/screenshots/ui-upgrade/{before,after}/validation.json.
+
+PASS: git diff --exit-code HEAD -- src/lib/finance.ts src/lib/account-migration.ts src/types/index.ts src/lib/validation.ts supabase/migrations
+Financial arithmetic, migration implementation, schemas, compatibility types and remote migration sources are unchanged.
+
+PASS: main ref unchanged at 0a6fac432eac9b4a94c5f9658bb2cc862372f1d3
+No production deployment, remote database migration, or production environment modification was performed.
+
+Intentional skips: guest suite skips local-cloud tests and desktop-only narrow checks; local-cloud suite skips unconfigured-auth checks and desktop-only narrow checks. The corresponding scenarios pass in the other configuration/project.
+Not exercised: real Google OAuth credentials, hosted customer accounts, physical mobile devices, independent accessibility certification.
