@@ -4,7 +4,8 @@ import {
   financialOperationsEnabled,
   requireFinancialOperations,
 } from "./deployment";
-export type Account = { id: string; email?: string };
+import { cleanDisplayName, type CustomerAccount } from "./identity";
+export type Account = CustomerAccount;
 const emailSchema = z.string().trim().email().max(254);
 const passwordSchema = z.string().min(8).max(128);
 function requiredClient() {
@@ -73,11 +74,16 @@ export const auth = {
           });
     if (result.error) throw new Error(result.error.message);
   },
-  async signUp(email: string, password: string) {
+  async signUp(email: string, password: string, fullName?: string) {
     const values = credentials(email, password, true);
     const { data, error } = await requiredClient().auth.signUp({
       ...values,
-      options: { emailRedirectTo: `${location.origin}/auth/callback` },
+      options: {
+        emailRedirectTo: `${location.origin}/auth/callback`,
+        ...(cleanDisplayName(fullName)
+          ? { data: { full_name: cleanDisplayName(fullName) } }
+          : {}),
+      },
     });
     if (error) throw new Error(error.message);
     // With email confirmation enabled, Supabase deliberately returns no session.
@@ -92,6 +98,15 @@ export const auth = {
           ? "Email or password is incorrect. Try again or use an email sign-in link."
           : error.message,
       );
+  },
+  async updateDisplayName(name: string) {
+    const displayName = cleanDisplayName(name);
+    if (!displayName || name.trim().length > 200)
+      throw new Error("Enter a name with 1–200 characters.");
+    const { error } = await requiredClient().auth.updateUser({
+      data: { full_name: displayName },
+    });
+    if (error) throw new Error(error.message);
   },
   async updatePassword(password: string) {
     if (!passwordSchema.safeParse(password).success)

@@ -57,14 +57,14 @@ export function DailyChart({
             dataKey="day"
             axisLine={false}
             tickLine={false}
-            tick={{ fontSize: 11, fill: "var(--muted)" }}
+            tick={{ fontSize: 12, fill: "var(--muted)" }}
             interval={days.length > 16 ? 3 : 1}
             dy={7}
           />
           <YAxis
             axisLine={false}
             tickLine={false}
-            tick={{ fontSize: 10, fill: "var(--muted)" }}
+            tick={{ fontSize: 12, fill: "var(--muted)" }}
             tickFormatter={(v) =>
               Math.abs(v) >= 100000
                 ? `${Math.round(v / 100000)}k`
@@ -204,7 +204,7 @@ export function ComparisonChart({
             tickFormatter={(v) => `${v / 100000}k`}
             axisLine={false}
             tickLine={false}
-            tick={{ fill: "var(--muted)", fontSize: 11 }}
+            tick={{ fill: "var(--muted)", fontSize: 12 }}
           />
           <Tooltip
             formatter={(v) => money(Number(v))}

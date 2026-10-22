@@ -52,12 +52,8 @@ export function InsightsPage() {
     <>
       <div className="page-heading">
         <div>
-          <span className="eyebrow">A STEP BACK. A CLEARER PICTURE.</span>
-          <h1>
-            Little patterns, useful perspective
-            <span className="heading-dot">.</span>
-          </h1>
-          <p>Get to know your spending. One insight at a time.</p>
+          <h1>Insights</h1>
+          <p>Spending patterns and monthly comparisons.</p>
         </div>
         <span className="insights-decoration">
           <ChartNoAxesCombined size={32} />
@@ -103,7 +99,7 @@ export function InsightsPage() {
             <Lightbulb size={23} />
           </span>
           <div>
-            <strong>A little insight for your month.</strong>
+            <strong>Spending summary</strong>
             <p>
               {s.categories[0].name} accounts for{" "}
               {Math.round((s.categories[0].value / s.spent) * 100)}% of your
@@ -148,7 +144,7 @@ export function InsightsPage() {
         <section className="panel">
           <div className="panel-heading">
             <div>
-              <h2>A little monthly perspective</h2>
+              <h2>Monthly comparison</h2>
               <p>Income, commitments & spending across saved plans.</p>
             </div>
           </div>
@@ -202,7 +198,7 @@ export function InsightsPage() {
         <section className="panel">
           <div className="panel-heading">
             <div>
-              <h2>Week by little week</h2>
+              <h2>Weekly spending</h2>
               <p>Recorded spending in seven-day groups.</p>
             </div>
           </div>

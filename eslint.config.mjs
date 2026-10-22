@@ -7,6 +7,7 @@ export default defineConfig([
   globalIgnores([
     ".next/**",
     ".next-e2e/**",
+    ".next-ui/**",
     ".next-deployment/**",
     "coverage/**",
     "test-results/**",

@@ -152,14 +152,8 @@ export function MonthlyPlanPage() {
     <>
       <div className="page-heading">
         <div>
-          <span className="eyebrow">A PLAN THAT MAKES ROOM FOR LIFE</span>
-          <h1>
-            The essentials, accounted for<span className="heading-dot">.</span>
-          </h1>
-          <p>
-            Give your month a starting point. We’ll take care of the daily
-            picture.
-          </p>
+          <h1>Monthly Plan</h1>
+          <p>Set income allocations and manage fixed commitments.</p>
         </div>
         <Button variant="secondary" onClick={() => setForm({})}>
           <Plus size={16} />
@@ -212,7 +206,7 @@ export function MonthlyPlanPage() {
               Monthly commitments{" "}
               <span className="count-badge">{recurring.length}</span>
             </h2>
-            <p>The regulars. They’ll carry forward automatically.</p>
+            <p>Recurring commitments carry forward automatically.</p>
           </div>
           <Button variant="secondary" size="sm" onClick={() => setForm({})}>
             <Plus size={15} />
@@ -268,9 +262,7 @@ export function MonthlyPlanPage() {
         ) : (
           <div className="inline-empty">
             <span>No one-time commitments this month.</span>
-            <span>
-              A repair, a registration, a little extra — give it a place here.
-            </span>
+            <span>One-time commitments apply only to the selected month.</span>
           </div>
         )}
       </section>
@@ -328,7 +320,7 @@ export function MonthlyPlanPage() {
       )}
       <section className="category-suggestions">
         <span className="eyebrow">THE USUAL ESSENTIALS</span>
-        <h3>A little inspiration for your plan.</h3>
+        <h3>Common commitments</h3>
         <div>
           {commitmentCategories.map((c, i) => {
             const Icon = icons[i];
@@ -362,9 +354,7 @@ export function MonthlyPlanPage() {
         open={!!form}
         onClose={() => setForm(null)}
         title={
-          form?.initial?.name
-            ? "A little change to your plan"
-            : "Make room for a commitment"
+          form?.initial?.name ? "Edit commitment" : "Make room for a commitment"
         }
         description={monthLabel(month)}
       >

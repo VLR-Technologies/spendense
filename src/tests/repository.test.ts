@@ -1,6 +1,6 @@
 import { beforeEach, afterEach, describe, it, expect } from "vitest";
 import { DaywiseDatabase } from "@/lib/db";
-import { LocalRepository } from "@/lib/repositories/local";
+import { LocalRepository, localAuth } from "@/lib/repositories/local";
 import { summarize } from "@/lib/finance";
 import type { MonthlyCommitment, DailyExpense } from "@/types";
 let database: DaywiseDatabase;
@@ -310,5 +310,43 @@ describe("backup validation and restore", () => {
     ).rejects.toThrow("conflict");
     expect((await repo.exportProfile(profileId)).expenses).toHaveLength(1);
     expect((await repo.exportProfile(other.id)).expenses).toHaveLength(0);
+  });
+});
+
+describe("idempotent guest entry", () => {
+  it("reuses a saved guest budget without changing its financial history", async () => {
+    await repo.saveIncome(profileId, "2026-10", 1234567, "default");
+    const before = summarize(await repo.getMonth(profileId, "2026-10"));
+    const opened = await Promise.all(
+      Array.from({ length: 5 }, () => repo.openGuestBudget()),
+    );
+    expect(new Set(opened.map((p) => p.id))).toEqual(new Set([profileId]));
+    expect(await repo.profiles()).toHaveLength(1);
+    expect(summarize(await repo.getMonth(profileId, "2026-10"))).toEqual(
+      before,
+    );
+  });
+  it("keeps demo and guest data separate and preserves every existing budget", async () => {
+    const demo = await repo.openGuestBudget(true);
+    const family = await repo.createProfile("Family");
+    localAuth.selectLocalProfile(profileId);
+    expect((await repo.openGuestBudget(true)).id).toBe(demo.id);
+    expect((await repo.openGuestBudget()).id).toBe(profileId);
+    expect((await repo.getMonth(profileId, "2026-10")).expenses).toHaveLength(
+      0,
+    );
+    expect(
+      (await repo.getMonth(demo.id, "2026-10")).expenses.length,
+    ).toBeGreaterThan(0);
+    expect((await repo.profiles()).map((p) => p.id)).toContain(family.id);
+    expect(await repo.profiles()).toHaveLength(3);
+  });
+  it("creates only one default guest budget across concurrent first entry", async () => {
+    await repo.deleteProfile(profileId);
+    const opened = await Promise.all(
+      Array.from({ length: 5 }, () => repo.openGuestBudget()),
+    );
+    expect(new Set(opened.map((p) => p.id)).size).toBe(1);
+    expect(await repo.profiles()).toHaveLength(1);
   });
 });

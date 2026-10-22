@@ -1,0 +1,242 @@
+[
+  {
+    "width": 1440,
+    "route": "dashboard",
+    "theme": "light",
+    "overflow": false,
+    "values": [
+      "₹1,00,000",
+      "₹19,000",
+      "₹81,000",
+      "₹2,612.90"
+    ]
+  },
+  {
+    "width": 1440,
+    "route": "calendar",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "route": "monthly-plan",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "route": "expenses",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "route": "insights",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "route": "settings",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "route": "dashboard",
+    "theme": "dark",
+    "overflow": false
+  },
+  {
+    "width": 1024,
+    "route": "dashboard",
+    "theme": "light",
+    "overflow": false,
+    "values": [
+      "₹1,00,000",
+      "₹19,000",
+      "₹81,000",
+      "₹2,612.90"
+    ]
+  },
+  {
+    "width": 1024,
+    "route": "calendar",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 1024,
+    "route": "monthly-plan",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 1024,
+    "route": "expenses",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 1024,
+    "route": "insights",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 1024,
+    "route": "settings",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 1024,
+    "route": "dashboard",
+    "theme": "dark",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "route": "dashboard",
+    "theme": "light",
+    "overflow": false,
+    "values": [
+      "₹1,00,000",
+      "₹19,000",
+      "₹81,000",
+      "₹2,612.90"
+    ]
+  },
+  {
+    "width": 768,
+    "route": "calendar",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "route": "monthly-plan",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "route": "expenses",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "route": "insights",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "route": "settings",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "route": "dashboard",
+    "theme": "dark",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "route": "dashboard",
+    "theme": "light",
+    "overflow": false,
+    "values": [
+      "₹1,00,000",
+      "₹19,000",
+      "₹81,000",
+      "₹2,612.90"
+    ]
+  },
+  {
+    "width": 390,
+    "route": "calendar",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "route": "monthly-plan",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "route": "expenses",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "route": "insights",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "route": "settings",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "route": "dashboard",
+    "theme": "dark",
+    "overflow": false
+  },
+  {
+    "width": 360,
+    "route": "dashboard",
+    "theme": "light",
+    "overflow": false,
+    "values": [
+      "₹1,00,000",
+      "₹19,000",
+      "₹81,000",
+      "₹2,612.90"
+    ]
+  },
+  {
+    "width": 360,
+    "route": "calendar",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 360,
+    "route": "monthly-plan",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 360,
+    "route": "expenses",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 360,
+    "route": "insights",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 360,
+    "route": "settings",
+    "theme": "light",
+    "overflow": false
+  },
+  {
+    "width": 360,
+    "route": "dashboard",
+    "theme": "dark",
+    "overflow": false
+  }
+]

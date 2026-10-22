@@ -24,7 +24,7 @@ export function MonthlyBudgetBreakdown({
       aria-label="Monthly budget calculation"
     >
       <div className="panel-heading">
-        <h2>How your allowance is set</h2>
+        <h2>Monthly Overview</h2>
         <button className="text-link" onClick={onEditIncome}>
           Edit income
         </button>

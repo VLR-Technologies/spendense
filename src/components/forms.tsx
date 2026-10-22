@@ -103,11 +103,10 @@ export function IncomeForm({
   return (
     <form onSubmit={save} className="income-form">
       <div className="amount-heading">
-        <span className="eyebrow">YOUR MONTHLY INCOME</span>
+        <span className="eyebrow">Monthly Income</span>
         <div className="income-number">
           <AnimatedMoney value={minor} />
         </div>
-        <span className="muted">A little clarity goes a long way.</span>
       </div>
       <label htmlFor="income-slider" className="sr-only">
         Monthly income slider
@@ -268,9 +267,7 @@ export function ExpenseForm({
           updatedAt: new Date().toISOString(),
         });
       },
-      initial
-        ? "Expense updated"
-        : "Expense added. Every little bit, accounted for.",
+      initial ? "Expense updated" : "Expense added.",
     );
     setBusy(false);
     if (success) onDone();
@@ -649,23 +646,26 @@ export function ProfileDialog({
   open: boolean;
   onClose: () => void;
 }) {
-  const { repository, mode, profiles, selectProfile, act } = useApp();
+  const { repository, mode, profiles, profileId, selectProfile, act } =
+    useApp();
+  const [busy, setBusy] = useState(false);
   const [name, setName] = useState("");
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      title="Your little financial worlds"
+      title="Manage Budgets"
       description={
         mode === "cloud"
-          ? "Separate profiles in your cloud account."
-          : "Separate local profiles. Stored only in this browser."
+          ? "Separate financial budgets belonging to your account."
+          : "Guest and demo budgets stored in this browser. These are not login accounts."
       }
     >
       <div className="profile-list">
         {profiles.map((p) => (
           <button
             key={p.id}
+            aria-pressed={p.id === profileId}
             onClick={() => {
               selectProfile(p.id);
               onClose();
@@ -676,10 +676,10 @@ export function ProfileDialog({
               <strong>{profileDisplayName(p)}</strong>
               <small>
                 {mode === "cloud"
-                  ? "Cloud profile · your account"
+                  ? "Account budget"
                   : p.demo
-                    ? "Sample data · demo profile"
-                    : "Local profile · this device"}
+                    ? "Demo · sample data"
+                    : "Guest budget · this device"}
               </small>
             </span>
             <ArrowRight size={18} />
@@ -690,16 +690,19 @@ export function ProfileDialog({
         className="stack-form"
         onSubmit={async (e) => {
           e.preventDefault();
+          if (busy) return;
+          setBusy(true);
           await act(async () => {
             const p = await repository.createProfile(name);
             selectProfile(p.id);
             setName("");
             onClose();
-          }, "Your new profile is ready");
+          }, "Budget created");
+          setBusy(false);
         }}
       >
         <label className="field">
-          Create a new profile
+          Create a new budget
           <input
             required
             maxLength={50}
@@ -708,9 +711,13 @@ export function ProfileDialog({
             onChange={(e) => setName(e.target.value)}
           />
         </label>
-        <Button type="submit">
+        <Button type="submit" disabled={busy}>
           <Plus size={16} />
-          {mode === "cloud" ? "Create cloud profile" : "Create local profile"}
+          {busy
+            ? "Creating…"
+            : mode === "cloud"
+              ? "Create budget"
+              : "Create guest budget"}
         </Button>
       </form>
     </Dialog>

@@ -22,3 +22,5 @@ credentials*.json
 service-account*.json
 supabase-status*.json
 *-backup*.json
+
+.next-ui/
