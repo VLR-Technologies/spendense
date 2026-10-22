@@ -1,0 +1,37 @@
+export const dailyCategories = [
+  "Food",
+  "Groceries",
+  "Coffee",
+  "Shopping",
+  "Public transport",
+  "Fuel",
+  "Entertainment",
+  "Travel",
+  "Healthcare",
+  "Education",
+  "Personal care",
+  "Gifts",
+  "Miscellaneous",
+];
+export const commitmentCategories = [
+  "Room Rent",
+  "Health Insurance",
+  "Income Tax",
+  "Electricity",
+  "Water Bill",
+  "Internet/Wi-Fi",
+  "Mobile Recharge",
+  "Transport Pass",
+  "Loan / EMI",
+  "Subscriptions",
+  "Education Fees",
+  "Other Mandatory Expense",
+];
+export const chartColors = [
+  "#8b6cf0",
+  "#53bfa9",
+  "#f2b76c",
+  "#789aef",
+  "#ec91ad",
+  "#a7a4b2",
+];
