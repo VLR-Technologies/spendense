@@ -3,6 +3,7 @@ export type CustomerAccount = {
   id: string;
   email?: string;
   displayName?: string;
+  preferredName?: string;
 };
 export function cleanDisplayName(value: unknown): string | undefined {
   if (typeof value !== "string") return undefined;

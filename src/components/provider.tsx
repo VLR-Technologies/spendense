@@ -15,6 +15,8 @@ import {
   localAuth,
   repository as localRepository,
 } from "@/lib/repositories/local";
+import { CustomerRepository } from "@/lib/repositories/customer";
+import type { CustomerPreferences } from "@/lib/customer-income";
 import { CloudRepository } from "@/lib/repositories/cloud";
 import type { DaywiseRepository } from "@/lib/repositories/contracts";
 import { auth, type Account } from "@/lib/auth";
@@ -35,6 +37,14 @@ type ImportResult = {
   expenses: number;
 };
 type AppContextValue = {
+  customerPreferences: CustomerPreferences | null;
+  customerStatus: "loading" | "ready" | "error";
+  customerError: string;
+  refreshCustomer: () => void;
+  setCustomerPreferences: (
+    value: CustomerPreferences,
+    completedBudgetId?: string,
+  ) => void;
   profiles: Profile[];
   localProfiles: Profile[];
   profile: Profile | null;
@@ -73,9 +83,9 @@ function ActiveAppProvider({ children }: { children: ReactNode }) {
   const [authError, setAuthError] = useState("");
   const [mode, setMode] = useState<Mode>("local");
   const generation = useRef(0);
-  const recheckAccount = useCallback(() => {
+  const recheckAccount = useCallback((quiet = false) => {
     const check = ++generation.current;
-    setChecking(true);
+    if (!quiet) setChecking(true);
     auth
       .current()
       .then((user) => {
@@ -106,8 +116,9 @@ function ActiveAppProvider({ children }: { children: ReactNode }) {
     void Promise.resolve().then(() => {
       if (active) recheckAccount();
     });
-    const unsubscribe = auth.subscribe(() => {
-      if (active) recheckAccount();
+    const unsubscribe = auth.subscribe((event) => {
+      if (active)
+        recheckAccount(event === "USER_UPDATED" || event === "TOKEN_REFRESHED");
     });
     return () => {
       active = false;
@@ -139,7 +150,7 @@ function ActiveAppProvider({ children }: { children: ReactNode }) {
         <strong>Spendense.</strong>
         <h1>Unable to verify your account</h1>
         <p role="alert">{authError}</p>
-        <Button onClick={recheckAccount}>Retry connection</Button>
+        <Button onClick={() => recheckAccount()}>Retry connection</Button>
       </main>
     );
   return (
@@ -166,6 +177,44 @@ function WorkspaceProvider({
   recheckAccount: () => void;
   authError: string;
 }) {
+  const [customerPreferences, updateCustomerPreferences] =
+    useState<CustomerPreferences | null>(null);
+  const customerGeneration = useRef(0);
+  const [customerStatus, setCustomerStatus] = useState<
+    "loading" | "ready" | "error"
+  >(account && mode === "cloud" ? "loading" : "ready");
+  const [customerError, setCustomerError] = useState("");
+  const [customerRevision, setCustomerRevision] = useState(0);
+  const refreshCustomer = useCallback(
+    () => setCustomerRevision((r) => r + 1),
+    [],
+  );
+  const customerOwner = mode === "cloud" ? account?.id : undefined;
+  useEffect(() => {
+    if (!customerOwner) return;
+    let cancelled = false;
+    const generation = ++customerGeneration.current;
+    const client = browserClient();
+    if (!client) return;
+    new CustomerRepository(client, customerOwner)
+      .load()
+      .then((value) => {
+        if (!cancelled && generation === customerGeneration.current) {
+          updateCustomerPreferences(value);
+          setCustomerStatus("ready");
+          setCustomerError("");
+        }
+      })
+      .catch((e) => {
+        if (!cancelled && generation === customerGeneration.current) {
+          setCustomerStatus("error");
+          setCustomerError(e.message);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [customerOwner, customerRevision]);
   const [guestName, updateGuestName] = useState("");
   useEffect(() => {
     void Promise.resolve().then(() => {
@@ -196,6 +245,24 @@ function WorkspaceProvider({
     return localRepository;
   }, [mode, account]);
   const [cloudProfiles, setCloudProfiles] = useState<Profile[]>([]);
+  const setCustomerPreferences = useCallback(
+    (value: CustomerPreferences, completedBudgetId?: string) => {
+      customerGeneration.current += 1;
+      updateCustomerPreferences(value);
+      setCustomerStatus("ready");
+      setCustomerError("");
+      // The RPC already committed this flag. Reflect it before rendering the dashboard.
+      if (completedBudgetId)
+        setCloudProfiles((list) =>
+          list.map((budget) =>
+            budget.id === completedBudgetId
+              ? { ...budget, onboardingComplete: true }
+              : budget,
+          ),
+        );
+    },
+    [],
+  );
   const profiles = mode === "local" ? localProfiles : cloudProfiles;
   const [profileId, setProfileId] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
@@ -377,6 +444,11 @@ function WorkspaceProvider({
   return (
     <Context.Provider
       value={{
+        customerPreferences,
+        customerStatus,
+        customerError,
+        refreshCustomer,
+        setCustomerPreferences,
         profiles,
         localProfiles,
         profile,

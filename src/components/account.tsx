@@ -111,37 +111,25 @@ export function AccountControls({
               </p>
             </div>
           </div>
-          {(account || !profile?.demo) && (
+          {!account && !profile?.demo && (
             <form
               className="stack-form"
               onSubmit={(e) => {
                 e.preventDefault();
                 void run(async () => {
-                  if (account) {
-                    await auth.updateDisplayName(
-                      editName ?? account.displayName ?? "",
-                    );
-                    recheckAccount();
-                  } else {
-                    setGuestName?.(editName ?? guestName ?? "");
-                    setMessage("Preferred name saved.");
-                  }
+                  setGuestName?.(editName ?? guestName ?? "");
+                  setMessage("Preferred name saved.");
                 });
               }}
             >
               <label className="field">
-                {account
-                  ? "Customer display name"
-                  : "Preferred guest name (optional)"}
+                Preferred guest name (optional)
                 <input
                   autoComplete="name"
-                  value={
-                    editName ??
-                    (account ? (account.displayName ?? "") : (guestName ?? ""))
-                  }
+                  value={editName ?? guestName ?? ""}
                   onChange={(e) => setEditName(e.target.value)}
                   maxLength={200}
-                  required={!!account}
+                  required={false}
                 />
               </label>
               <Button type="submit" variant="secondary" disabled={busy}>

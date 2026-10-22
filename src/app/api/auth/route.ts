@@ -35,6 +35,9 @@ export async function GET() {
         ? {
             id: data.user.id,
             email: data.user.email,
+            preferredName: cleanDisplayName(
+              data.user.user_metadata?.preferred_name,
+            ),
             ...(cleanDisplayName(
               data.user.user_metadata?.full_name ??
                 data.user.user_metadata?.name,

@@ -5937,3 +5937,274 @@ h2 {
     margin-right: -4px;
   }
 }
+
+/* Customer setup shares the existing surface, field, and theme tokens. */
+.customer-welcome {
+  min-height: 100dvh;
+  padding-bottom: 48px;
+}
+.customer-onboarding {
+  width: min(700px, calc(100% - 40px));
+  margin: 24px auto;
+  padding: 36px;
+}
+.customer-onboarding h1,
+.customer-edit h1 {
+  letter-spacing: -0.025em;
+  font-size: clamp(24px, 4vw, 30px);
+  line-height: 1.25;
+  margin: 24px 0;
+  outline: none;
+}
+.customer-step-label {
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 600;
+}
+.customer-onboarding .onboarding-progress,
+.customer-edit .onboarding-progress {
+  margin: 16px 0 24px;
+}
+.customer-categories {
+  display: grid;
+  gap: 12px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.customer-category {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  cursor: pointer;
+  background: var(--surface);
+}
+.customer-category.selected {
+  background: var(--accent-light);
+  border-color: var(--accent);
+}
+.customer-category:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.customer-category > input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.customer-category > svg {
+  flex-shrink: 0;
+  color: var(--accent);
+}
+.customer-category > span {
+  flex: 1;
+  min-width: 0;
+}
+.customer-category strong {
+  display: block;
+  font-size: 16px;
+  font-weight: 650;
+}
+.customer-category span span {
+  display: block;
+  font-size: 14px;
+  margin-top: 4px;
+}
+.customer-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.customer-onboarding .field,
+.customer-edit .field {
+  font-size: 14px;
+}
+.customer-onboarding input:not([type="checkbox"]):not([type="radio"]),
+.customer-edit input:not([type="checkbox"]):not([type="radio"]),
+.customer-onboarding select,
+.customer-edit select {
+  min-height: 48px;
+  width: 100%;
+  min-width: 0;
+}
+.customer-onboarding input[readonly],
+.customer-edit input[readonly] {
+  background: var(--surface-alt);
+}
+.customer-onboarding .button,
+.customer-edit .button {
+  min-height: 44px;
+}
+.customer-onboarding .form-actions,
+.customer-edit .form-actions {
+  margin-top: 12px;
+}
+.customer-onboarding .account-note,
+.customer-edit .account-note,
+.customer-onboarding .check-field,
+.customer-edit .check-field {
+  font-size: 14px;
+}
+.customer-estimate {
+  padding: 20px;
+  border-radius: 16px;
+  background: var(--accent-light);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.customer-estimate > span {
+  display: block;
+  font-weight: 500;
+}
+.customer-estimate > strong {
+  display: block;
+  font-family: "Manrope Variable", sans-serif;
+  font-size: clamp(24px, 4vw, 32px);
+  margin: 6px 0 12px;
+}
+.customer-estimate p {
+  margin: 8px 0 0;
+}
+.customer-estimate .simple-row {
+  font-size: 14px;
+  gap: 16px;
+}
+.customer-estimate .simple-row strong {
+  text-align: right;
+}
+.customer-commitments {
+  display: grid;
+  gap: 10px;
+}
+.customer-commitments h2 {
+  margin: 0;
+  font-size: 18px;
+}
+.customer-commitments .simple-row {
+  gap: 16px;
+  font-size: 14px;
+}
+.customer-commitments .simple-row span {
+  overflow-wrap: anywhere;
+}
+.paid-weekdays {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  font-size: 14px;
+}
+.paid-weekdays legend {
+  padding: 0 6px;
+  font-weight: 600;
+}
+.paid-weekdays label {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  gap: 10px;
+}
+.paid-weekdays input {
+  accent-color: var(--accent);
+  width: 18px;
+  height: 18px;
+}
+.customer-details {
+  margin: 0;
+  font-size: 14px;
+}
+.customer-details > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 12px 0;
+  gap: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.customer-details > div:last-child {
+  border-bottom: 0;
+}
+.customer-details dt {
+  opacity: 0.8;
+}
+.customer-details dd {
+  margin: 0;
+  font-weight: 550;
+  overflow-wrap: anywhere;
+  text-transform: none;
+}
+.personal-income .panel-heading {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.customer-complete {
+  padding: 36px 0;
+  text-align: center;
+}
+.customer-complete > svg {
+  color: var(--accent);
+}
+.hero-budget-label {
+  font-size: 15px;
+  font-weight: 500;
+  margin: 20px 0 6px;
+}
+.budget-explanation {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+}
+.budget-explanation summary {
+  cursor: pointer;
+}
+.budget-explanation details {
+  flex: 1;
+  min-width: 150px;
+}
+.budget-explanation details p {
+  margin: 8px 0 0;
+}
+.sidebar nav {
+  margin-top: 28px;
+}
+@media (max-width: 600px) {
+  .customer-onboarding {
+    padding: 24px 20px;
+    width: calc(100% - 24px);
+    margin: 12px auto;
+  }
+  .customer-welcome > header {
+    gap: 12px;
+  }
+  .customer-fields {
+    grid-template-columns: 1fr;
+  }
+  .customer-category {
+    gap: 12px;
+    padding: 16px;
+  }
+  .customer-category strong {
+    font-size: 15px;
+  }
+  .customer-estimate {
+    padding: 16px;
+  }
+  .customer-details > div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .customer-onboarding .form-actions,
+  .customer-edit .form-actions {
+    flex-wrap: wrap;
+  }
+}

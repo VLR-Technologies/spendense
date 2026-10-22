@@ -4,18 +4,19 @@ import {
   screen,
   waitFor,
   act as reactAct,
+  fireEvent,
 } from "@testing-library/react";
 import type { Account } from "@/lib/auth";
 import { thisMonth } from "@/lib/dates";
 const mocked = vi.hoisted(() => ({
   current: vi.fn(),
-  listener: null as null | (() => void),
+  listener: null as null | ((event?: string) => void),
   owners: [] as string[],
 }));
 vi.mock("@/lib/auth", () => ({
   auth: {
     current: mocked.current,
-    subscribe: (callback: () => void) => {
+    subscribe: (callback: (event?: string) => void) => {
       mocked.listener = callback;
       return () => {};
     },
@@ -68,6 +69,7 @@ function Probe() {
       <span>{app.profile?.displayName}</span>
       <span>{app.data?.plan.monthlyIncomeMinor}</span>
       <span>{app.month}</span>
+      <input aria-label="Unsaved setup field" defaultValue="" />
     </div>
   );
 }
@@ -87,6 +89,31 @@ async function change(user: Account | null) {
   });
 }
 describe("verified account workspace transitions", () => {
+  it("keeps in-progress fields mounted while a metadata event is verified", async () => {
+    mocked.current.mockResolvedValue({ id: "alice", displayName: "Alice" });
+    render(
+      <AppProvider>
+        <Probe />
+      </AppProvider>,
+    );
+    await screen.findByText("12345");
+    fireEvent.change(screen.getByLabelText("Unsaved setup field"), {
+      target: { value: "Unfinished setup" },
+    });
+    mocked.current.mockResolvedValue({
+      id: "alice",
+      displayName: "Alice Updated",
+    });
+    await reactAct(async () => {
+      mocked.listener?.("USER_UPDATED");
+    });
+    expect(screen.getByLabelText("Unsaved setup field")).toHaveValue(
+      "Unfinished setup",
+    );
+    expect(
+      screen.queryByText("Opening your workspace…"),
+    ).not.toBeInTheDocument();
+  });
   it("keeps guest and financial views unmounted while session verification fails", async () => {
     mocked.current.mockRejectedValue(
       new Error("Cannot verify your cloud session. Retry."),

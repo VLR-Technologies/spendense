@@ -1,0 +1,19 @@
+{
+  "branch": "UI-upgrade",
+  "baseCommit": "396c031410dc726ce69c77aebfc9172e6d5ff5b4",
+  "checks": {
+    "check:secrets": "PASS",
+    "lint": "PASS (0 warnings)",
+    "typecheck": "PASS",
+    "test": "PASS: 115 tests",
+    "build": "PASS",
+    "db:test": "PASS: 157 tests",
+    "test:e2e": "PASS: 27 passed, 9 expected skips",
+    "test:cloud": "PASS: 33 passed, 3 expected skips",
+    "test:deployment": "PASS: 2 maintenance, 2 local locked-mode, 2 compiled-maintenance",
+    "visual": "PASS: 35 layouts, 0 overflow; screenshots at 1440/1024/768/390/360px"
+  },
+  "hostedDatabaseTested": false,
+  "remoteMigrationExecuted": false,
+  "productionDeploymentExecuted": false
+}

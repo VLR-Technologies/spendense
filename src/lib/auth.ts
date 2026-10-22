@@ -31,11 +31,11 @@ function credentials(email: string, password: string, signup = false) {
 }
 export const auth = {
   configured: () => financialOperationsEnabled() && !!browserClient(),
-  subscribe(callback: () => void) {
+  subscribe(callback: (event?: string) => void) {
     if (!financialOperationsEnabled()) return () => {};
     const client = browserClient();
-    const subscription = client?.auth.onAuthStateChange(() => {
-      callback();
+    const subscription = client?.auth.onAuthStateChange((event) => {
+      callback(event);
     }).data.subscription;
     return () => subscription?.unsubscribe();
   },
@@ -99,12 +99,17 @@ export const auth = {
           : error.message,
       );
   },
-  async updateDisplayName(name: string) {
+  async updateDisplayName(name: string, preferredName?: string) {
     const displayName = cleanDisplayName(name);
     if (!displayName || name.trim().length > 200)
       throw new Error("Enter a name with 1–200 characters.");
     const { error } = await requiredClient().auth.updateUser({
-      data: { full_name: displayName },
+      data: {
+        full_name: displayName,
+        ...(preferredName !== undefined
+          ? { preferred_name: cleanDisplayName(preferredName) ?? "" }
+          : {}),
+      },
     });
     if (error) throw new Error(error.message);
   },
