@@ -60,7 +60,7 @@ export function AccountControls({
     if (url.searchParams.has("auth_error")) {
       void Promise.resolve().then(() => {
         setError(
-          "This sign-in link expired or could not be verified. Request a new link or try Google again.",
+          "Sign-in was cancelled, expired, or could not be verified. Try Google again or use email.",
         );
         setOpen(true);
       });

@@ -24,7 +24,7 @@ For deliberate local development of the existing application, clear cloud config
 NEXT_PUBLIC_APP_MODE=live NEXT_PUBLIC_SUPABASE_URL= NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY= npm run dev
 ```
 
-The enabled app offers **Continue as guest**, **Create a named local profile**, and **Try the demo**. Guests start with zero income and no invented expenses. Demo records and the welcome-page sample are explicitly labeled and isolated. These samples never appear in the locked preview.
+The landing page offers **Create account**, **Sign in**, and **Continue as guest**. Guests start with zero income and no invented expenses. The illustrative budget preview remains labeled as a sample. Existing saved demo budgets and their reset/backup infrastructure remain supported; there is no landing-page demo action. These samples never appear in the locked preview.
 
 For a production build served locally:
 

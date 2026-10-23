@@ -1,0 +1,11 @@
+> spendense@1.0.0 test
+> vitest run
+
+
+ RUN  v4.1.12 /Users/likhithreddy/Documents/daywise
+
+
+ Test Files  12 passed (12)
+      Tests  129 passed (129)
+   Start at  12:00:45
+   Duration  18.15s (transform 514ms, setup 2.05s, import 7.63s, tests 1.97s, environment 5.20s)

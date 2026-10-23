@@ -1,3 +1,4 @@
+import { installDemoFixture } from "../scripts/lib/demo-fixture.cjs";
 import { completeCustomerSetup, editCustomerName } from "./helpers/customer";
 import {
   test,
@@ -81,7 +82,7 @@ test("email/password confirmation, cloud financial history, two accounts and pas
   const email = `password-${info.project.name}-${Date.now()}@example.test`;
   await page.clock.setFixedTime(new Date("2026-10-22T12:00:00+02:00"));
   await page.goto("/");
-  await page.getByRole("button", { name: "Try demo", exact: true }).click();
+  await installDemoFixture(page);
   await expect(
     page.getByRole("region", { name: "Monthly budget calculation" }),
   ).toContainText("₹81,000");

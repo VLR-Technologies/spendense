@@ -1,0 +1,17 @@
+{
+  "branch": "UI-upgrade",
+  "checks": {
+    "secrets": "PASS",
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "unit": "129 passed",
+    "build": "PASS",
+    "cloudE2E": "40 passed, 4 expected skips",
+    "guestE2E": "30 passed, 14 expected skips",
+    "deployment": "2 passed",
+    "landingVisual": "5 widths x light/dark; no horizontal overflow; three CTAs >=44px"
+  },
+  "liveGoogleAuthentication": "NOT VERIFIED: disabled provider and canonical domain configuration pending",
+  "schemaOrFinancialLogicChanges": false,
+  "hostedConfigurationChanged": false
+}

@@ -1,7 +1,14 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-const mocks = vi.hoisted(() => ({ server: vi.fn(), browser: vi.fn() }));
+const mocks = vi.hoisted(() => ({
+  server: vi.fn(),
+  browser: vi.fn(),
+  google: vi.fn(),
+}));
 vi.mock("@/lib/supabase/server", () => ({ serverClient: mocks.server }));
 vi.mock("@/lib/supabase/browser", () => ({ browserClient: mocks.browser }));
+vi.mock("@/lib/google-provider", () => ({
+  requireGoogleProvider: mocks.google,
+}));
 import { GET as callback } from "@/app/auth/callback/route";
 import { GET as identity } from "@/app/api/auth/route";
 import { auth } from "@/lib/auth";
@@ -62,6 +69,48 @@ describe("authentication boundaries", () => {
     );
     expect(response.headers.get("location")).toContain("auth_error=callback");
   });
+  it("does not exchange codes for cancelled OAuth or reveal provider descriptions", async () => {
+    const exchangeCodeForSession = vi.fn();
+    mocks.server.mockResolvedValue({ auth: { exchangeCodeForSession } });
+    const response = await callback(
+      new Request(
+        "https://spendense.com/auth/callback?error=access_denied&error_description=private-provider-details&code=do-not-exchange",
+      ),
+    );
+    expect(response.headers.get("location")).toBe(
+      "https://spendense.com/dashboard?auth_error=callback",
+    );
+    expect(exchangeCodeForSession).not.toHaveBeenCalled();
+  });
+  it("redirects a successful production code exchange straight to the canonical dashboard", async () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "http://localhost:3000");
+    mocks.server.mockResolvedValue({
+      auth: {
+        exchangeCodeForSession: vi.fn().mockResolvedValue({ error: null }),
+        getClaims: vi
+          .fn()
+          .mockResolvedValue({
+            data: { claims: { sub: "verified" } },
+            error: null,
+          }),
+      },
+    });
+    const response = await callback(
+      new Request("https://www.spendense.com/auth/callback?code=valid"),
+    );
+    expect(response.headers.get("location")).toBe(
+      "https://spendense.com/dashboard",
+    );
+  });
+  it("sanitizes server-client construction failures", async () => {
+    mocks.server.mockRejectedValue(new Error("private backend response"));
+    const response = await callback(
+      new Request("https://spendense.com/auth/callback?code=valid"),
+    );
+    expect(response.headers.get("location")).toBe(
+      "https://spendense.com/dashboard?auth_error=callback",
+    );
+  });
   it("never accepts client identity as server authorization", async () => {
     const getUser = vi.fn().mockResolvedValue({
       data: { user: { id: "verified", email: "verified@example.test" } },
@@ -114,7 +163,9 @@ describe("authentication boundaries", () => {
         signOut: vi.fn().mockResolvedValue({ error: { message: "offline" } }),
       },
     });
-    await expect(auth.signIn("google")).rejects.toThrow("Provider unavailable");
+    await expect(auth.signIn("google")).rejects.toThrow(
+      "Could not start Google sign-in",
+    );
     await expect(auth.signOut()).rejects.toThrow(/retry/);
   });
   it("signs up using the current origin and distinguishes confirmation from a session", async () => {
@@ -163,18 +214,16 @@ describe("authentication boundaries", () => {
   it("returns names only from the verified server user", async () => {
     mocks.server.mockResolvedValue({
       auth: {
-        getUser: vi
-          .fn()
-          .mockResolvedValue({
-            data: {
-              user: {
-                id: "a",
-                email: "alex@example.test",
-                user_metadata: { full_name: "Alex 王" },
-              },
+        getUser: vi.fn().mockResolvedValue({
+          data: {
+            user: {
+              id: "a",
+              email: "alex@example.test",
+              user_metadata: { full_name: "Alex 王" },
             },
-            error: null,
-          }),
+          },
+          error: null,
+        }),
       },
     });
     expect(await (await identity()).json()).toEqual({

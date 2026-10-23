@@ -1,3 +1,4 @@
+import { installDemoFixture } from "./lib/demo-fixture.cjs";
 import { chromium } from "@playwright/test";
 import fs from "node:fs/promises";
 const phase = process.argv[2] ?? "after";
@@ -22,7 +23,7 @@ for (const width of [1440, 1024, 768, 390, 360]) {
     path: `${dir}/${width}-welcome.png`,
     fullPage: true,
   });
-  await page.getByRole("button", { name: /^Try (the )?demo$/ }).click();
+  await installDemoFixture(page);
   await page.locator(".hero-amount").waitFor();
   await page
     .getByRole("region", { name: "Monthly budget calculation" })

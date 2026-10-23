@@ -1,3 +1,5 @@
+import { googleCallbackUrl } from "./auth-redirect";
+import { requireGoogleProvider } from "./google-provider";
 import { browserClient } from "./supabase/browser";
 import { z } from "zod";
 import {
@@ -61,17 +63,25 @@ export const auth = {
   },
   async signIn(provider: "google" | "email", email = "") {
     const client = requiredClient();
-    const redirectTo = `${location.origin}/auth/callback`;
-    const result =
-      provider === "google"
-        ? await client.auth.signInWithOAuth({
-            provider: "google",
-            options: { redirectTo },
-          })
-        : await client.auth.signInWithOtp({
-            email: emailSchema.parse(email),
-            options: { emailRedirectTo: redirectTo },
-          });
+    if (provider === "google") {
+      await requireGoogleProvider();
+      try {
+        const { error } = await client.auth.signInWithOAuth({
+          provider: "google",
+          options: { redirectTo: googleCallbackUrl(location.origin) },
+        });
+        if (error) throw new Error();
+      } catch {
+        throw new Error(
+          "Could not start Google sign-in. Retry, use email, or continue as a guest.",
+        );
+      }
+      return;
+    }
+    const result = await client.auth.signInWithOtp({
+      email: emailSchema.parse(email),
+      options: { emailRedirectTo: `${location.origin}/auth/callback` },
+    });
     if (result.error) throw new Error(result.error.message);
   },
   async signUp(email: string, password: string, fullName?: string) {

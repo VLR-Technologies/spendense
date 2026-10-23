@@ -1,3 +1,4 @@
+import { installDemoFixture } from "./lib/demo-fixture.cjs";
 import { chromium } from "@playwright/test";
 import fs from "node:fs/promises";
 const dir = "docs/screenshots/customer-onboarding/after";
@@ -12,12 +13,14 @@ for (const width of [1440, 1024, 768, 390, 360]) {
   });
   const page = await context.newPage();
   await page.goto("http://127.0.0.1:3300");
-  await page.getByRole("button", { name: "Try demo", exact: true }).waitFor();
+  await page
+    .getByRole("button", { name: "Continue as guest", exact: true })
+    .waitFor();
   await page.screenshot({
     path: `${dir}/${width}-welcome.png`,
     fullPage: true,
   });
-  await page.getByRole("button", { name: "Try demo", exact: true }).click();
+  await installDemoFixture(page);
   await page.locator(".hero-amount").waitFor();
   const baseline = await page.locator(".budget-equation dd").allTextContents();
   for (const route of [
