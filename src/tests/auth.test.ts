@@ -15,6 +15,7 @@ import { auth } from "@/lib/auth";
 import { supabaseConfig, supabaseEnvironment } from "@/lib/supabase/config";
 afterEach(() => {
   vi.unstubAllEnvs();
+  vi.unstubAllGlobals();
   vi.restoreAllMocks();
   vi.resetAllMocks();
 });
@@ -69,44 +70,50 @@ describe("authentication boundaries", () => {
     );
     expect(response.headers.get("location")).toContain("auth_error=callback");
   });
-  it("does not exchange codes for cancelled OAuth or reveal provider descriptions", async () => {
-    const exchangeCodeForSession = vi.fn();
-    mocks.server.mockResolvedValue({ auth: { exchangeCodeForSession } });
-    const response = await callback(
-      new Request(
-        "https://spendense.com/auth/callback?error=access_denied&error_description=private-provider-details&code=do-not-exchange",
-      ),
-    );
-    expect(response.headers.get("location")).toBe(
-      "https://spendense.com/dashboard?auth_error=callback",
-    );
-    expect(exchangeCodeForSession).not.toHaveBeenCalled();
-  });
-  it("redirects a successful production code exchange straight to the canonical dashboard", async () => {
-    vi.stubEnv("NEXT_PUBLIC_APP_URL", "http://localhost:3000");
-    mocks.server.mockResolvedValue({
-      auth: {
-        exchangeCodeForSession: vi.fn().mockResolvedValue({ error: null }),
-        getClaims: vi.fn().mockResolvedValue({
-          data: { claims: { sub: "verified" } },
-          error: null,
-        }),
-      },
-    });
-    const response = await callback(
-      new Request("https://www.spendense.com/auth/callback?code=valid"),
-    );
-    expect(response.headers.get("location")).toBe(
-      "https://spendense.com/dashboard",
-    );
-  });
+  it.each(["https://spendense.com", "https://www.spendense.com"])(
+    "returns cancelled OAuth from %s to www without exchanging codes or revealing provider descriptions",
+    async (origin) => {
+      const exchangeCodeForSession = vi.fn();
+      mocks.server.mockResolvedValue({ auth: { exchangeCodeForSession } });
+      const response = await callback(
+        new Request(
+          `${origin}/auth/callback?error=access_denied&error_description=private-provider-details&code=do-not-exchange`,
+        ),
+      );
+      expect(response.headers.get("location")).toBe(
+        "https://www.spendense.com/dashboard?auth_error=callback",
+      );
+      expect(exchangeCodeForSession).not.toHaveBeenCalled();
+    },
+  );
+  it.each(["https://spendense.com", "https://www.spendense.com"])(
+    "redirects a successful production code exchange from %s straight to the www dashboard",
+    async (origin) => {
+      vi.stubEnv("NEXT_PUBLIC_APP_URL", "http://localhost:3000");
+      mocks.server.mockResolvedValue({
+        auth: {
+          exchangeCodeForSession: vi.fn().mockResolvedValue({ error: null }),
+          getClaims: vi.fn().mockResolvedValue({
+            data: { claims: { sub: "verified" } },
+            error: null,
+          }),
+        },
+      });
+      const response = await callback(
+        new Request(`${origin}/auth/callback?code=valid`),
+      );
+      expect(response.headers.get("location")).toBe(
+        "https://www.spendense.com/dashboard",
+      );
+    },
+  );
   it("sanitizes server-client construction failures", async () => {
     mocks.server.mockRejectedValue(new Error("private backend response"));
     const response = await callback(
       new Request("https://spendense.com/auth/callback?code=valid"),
     );
     expect(response.headers.get("location")).toBe(
-      "https://spendense.com/dashboard?auth_error=callback",
+      "https://www.spendense.com/dashboard?auth_error=callback",
     );
   });
   it("never accepts client identity as server authorization", async () => {
@@ -152,6 +159,19 @@ describe("authentication boundaries", () => {
       options: { emailRedirectTo: `${location.origin}/auth/callback` },
     });
   });
+  it.each(["https://spendense.com", "https://www.spendense.com"])(
+    "starts Google OAuth from %s with the www callback",
+    async (origin) => {
+      vi.stubGlobal("location", new URL(origin));
+      const signInWithOAuth = vi.fn().mockResolvedValue({ error: null });
+      mocks.browser.mockReturnValue({ auth: { signInWithOAuth } });
+      await auth.signIn("google");
+      expect(signInWithOAuth).toHaveBeenCalledWith({
+        provider: "google",
+        options: { redirectTo: "https://www.spendense.com/auth/callback" },
+      });
+    },
+  );
   it("does not report success on provider or sign-out failures", async () => {
     mocks.browser.mockReturnValue({
       auth: {

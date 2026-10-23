@@ -1,5 +1,5 @@
-/** Both public production aliases use the requested canonical OAuth destination. */
-export const canonicalAppOrigin = "https://spendense.com";
+/** Keep production OAuth on the existing www primary domain and cookie origin. */
+export const canonicalAppOrigin = "https://www.spendense.com";
 function productionHost(hostname: string) {
   return hostname === "spendense.com" || hostname === "www.spendense.com";
 }

@@ -10,10 +10,14 @@ describe("Google canonical destinations", () => {
   it.each([
     "https://spendense.com",
     "https://www.spendense.com",
+    "http://spendense.com",
     "http://www.spendense.com",
-  ])("uses the apex HTTPS callback from %s", (origin) => {
+  ])("uses the www HTTPS callback from %s", (origin) => {
     expect(googleCallbackUrl(origin)).toBe(
-      "https://spendense.com/auth/callback",
+      "https://www.spendense.com/auth/callback",
+    );
+    expect(callbackOrigin(new Request(`${origin}/auth/callback`))).toBe(
+      "https://www.spendense.com",
     );
   });
   it("keeps isolated local PKCE on the local cookie origin", () => {
@@ -21,13 +25,29 @@ describe("Google canonical destinations", () => {
       "http://127.0.0.1:3100/auth/callback",
     );
   });
-  it("ignores a stale localhost application setting for production requests", () => {
-    vi.stubEnv("NODE_ENV", "production");
-    vi.stubEnv("NEXT_PUBLIC_APP_URL", "http://localhost:3000");
-    expect(
-      callbackOrigin(new Request("https://www.spendense.com/auth/callback")),
-    ).toBe("https://spendense.com");
-  });
+  it.each(["http://localhost:3000", "https://spendense.com"])(
+    "ignores stale application setting %s for production requests",
+    (configured) => {
+      vi.stubEnv("NODE_ENV", "production");
+      vi.stubEnv("NEXT_PUBLIC_APP_URL", configured);
+      expect(
+        callbackOrigin(new Request("https://www.spendense.com/auth/callback")),
+      ).toBe("https://www.spendense.com");
+    },
+  );
+  it.each(["spendense.com", "www.spendense.com"])(
+    "keeps proxied production callbacks on www for Host %s",
+    (host) => {
+      vi.stubEnv("NODE_ENV", "production");
+      expect(
+        callbackOrigin(
+          new Request("http://localhost/auth/callback", {
+            headers: { host },
+          }),
+        ),
+      ).toBe("https://www.spendense.com");
+    },
+  );
   it("rejects cross-origin or malformed configured callback destinations", () => {
     vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://evil.test");
     expect(

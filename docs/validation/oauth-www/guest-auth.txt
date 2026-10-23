@@ -1,0 +1,38 @@
+
+> spendense@1.0.0 test:e2e
+> playwright test e2e/landing-oauth.spec.ts e2e/stage-3.spec.ts e2e/ui-upgrade.spec.ts
+
+[WebServer] (node:41366) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:41367) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:41381) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 18 tests using 1 worker
+
+(node:41383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [desktop] › e2e/landing-oauth.spec.ts:4:5 › landing has three actions and a balanced illustrative card at five widths (1.8s)
+  ✓   2 [desktop] › e2e/landing-oauth.spec.ts:45:5 › cancelled Google sign-in returns a friendly error with guest access (1.0s)
+  -   3 [desktop] › e2e/landing-oauth.spec.ts:62:5 › disabled local Google provider stays in the app and preserves email and guest access
+  -   4 [desktop] › e2e/landing-oauth.spec.ts:79:5 › Google button invokes the real SDK with provider google and PKCE (initiation only)
+  ✓   5 [desktop] › e2e/stage-3.spec.ts:80:5 › optional sign-in preserves guest access and reports missing configuration (2.1s)
+  ✓   6 [desktop] › e2e/stage-3.spec.ts:121:5 › expired callback provides an actionable sign-in error (956ms)
+  -   7 [desktop] › e2e/stage-3.spec.ts:133:5 › local email authentication, consented import, retry, account isolation, refresh and cross-device persistence
+  ✓   8 [desktop] › e2e/ui-upgrade.spec.ts:4:5 › prominent authentication, explicit guest identity, and stable guest entry (3.0s)
+  ✓   9 [desktop] › e2e/ui-upgrade.spec.ts:84:5 › responsive visual hierarchy, themes and large amounts (8.5s)
+(node:41483) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -  10 [mobile] › e2e/landing-oauth.spec.ts:4:5 › landing has three actions and a balanced illustrative card at five widths
+  ✓  11 [mobile] › e2e/landing-oauth.spec.ts:45:5 › cancelled Google sign-in returns a friendly error with guest access (964ms)
+  -  12 [mobile] › e2e/landing-oauth.spec.ts:62:5 › disabled local Google provider stays in the app and preserves email and guest access
+  -  13 [mobile] › e2e/landing-oauth.spec.ts:79:5 › Google button invokes the real SDK with provider google and PKCE (initiation only)
+  ✓  14 [mobile] › e2e/stage-3.spec.ts:80:5 › optional sign-in preserves guest access and reports missing configuration (2.1s)
+  ✓  15 [mobile] › e2e/stage-3.spec.ts:121:5 › expired callback provides an actionable sign-in error (949ms)
+  -  16 [mobile] › e2e/stage-3.spec.ts:133:5 › local email authentication, consented import, retry, account isolation, refresh and cross-device persistence
+  ✓  17 [mobile] › e2e/ui-upgrade.spec.ts:4:5 › prominent authentication, explicit guest identity, and stable guest entry (2.9s)
+  ✓  18 [mobile] › e2e/ui-upgrade.spec.ts:84:5 › responsive visual hierarchy, themes and large amounts (8.5s)
+
+  7 skipped
+  11 passed (38.8s)

@@ -2,6 +2,8 @@
 
 Branch: **UI-upgrade**. Base: `583d027e9107ff13003392ac73c2ad22ce24e4cc`.
 
+**2026-10-23 follow-up:** Production OAuth in this branch now uses `https://www.spendense.com`, matching the existing primary domain. Both apex and www inputs select the www callback and dashboard, including failure redirects. Local/preview origins retain their existing behavior. This supersedes the earlier apex policy. Hosted settings, domains and credentials were not changed. The disabled-provider observation below is historical; the later merge review observed Google enabled, but a completed hosted Google login remains unverified.
+
 ## Outcome and live findings
 
 The landing-page **Try demo** action is removed. Sign in, Create account, Continue as guest and the illustrative Daily Budget card are preserved. The demo-only landing branch/parameter is removed; shared button/layout styling and the preview's arrow remain useful and are retained. Existing demo storage, reset, backup/import, budget switching and finance logic are unchanged.
@@ -17,7 +19,7 @@ No Google credentials were entered, no account was authenticated, and no hosted 
 ## Authentication implementation
 
 - `src/lib/auth.ts` still invokes Supabase `signInWithOAuth({provider: "google", options: {redirectTo}})`. Google Client ID/Secret remain exclusively in Supabase's provider configuration.
-- `src/lib/auth-redirect.ts` maps both known production aliases to **`https://spendense.com/auth/callback`**, and successful production callbacks to **`https://spendense.com/dashboard`**. A stale localhost/cross-origin app setting cannot override a known production host. Local development retains its actual origin for host-only PKCE cookies; there is no hardcoded localhost production redirect.
+- `src/lib/auth-redirect.ts` maps both known production aliases to **`https://www.spendense.com/auth/callback`**, and successful production callbacks to **`https://www.spendense.com/dashboard`**. A stale localhost/apex/cross-origin app setting cannot override a known production host. Local development retains its actual origin for host-only PKCE cookies; there is no hardcoded localhost production redirect.
 - `src/lib/google-provider.ts` reads Supabase's public `/auth/v1/settings` capability endpoint, using only the existing browser-safe public API key, before starting Google OAuth. A disabled provider or unavailable/malformed response produces a concise in-app error with email/guest alternatives, rather than navigating to the known disabled-provider JSON page. Provider flags are checked at click time and not cached indefinitely.
 - `src/app/auth/callback/route.ts` rejects provider cancellation/errors before exchange, exchanges a valid authorization code through the existing server client, verifies claims, and redirects directly to `/dashboard`. It does not create budgets or perform a second login. Server-client/network/exchange/verification failures return only a generic `auth_error=callback`; codes and provider descriptions are not reflected in redirect destinations.
 - `src/components/account.tsx` explains cancellation, expiry and verification failures without raw JSON. Existing email/password, confirmation, email-link and guest actions retain their behavior.
@@ -30,10 +32,10 @@ The code does not add automatic profile creation, change financial repositories,
 
 The operator must complete these steps in the **existing** project; no second Supabase project or staging environment is needed:
 
-1. In Google Cloud, use a Web application OAuth client. Set the authorized JavaScript origin to `https://spendense.com`. Use the Supabase callback URI shown in the existing project's Google-provider page as Google's authorized redirect URI: currently `https://cafchbayuygxiummapyf.supabase.co/auth/v1/callback`. This differs from the application callback.
-2. In Supabase Dashboard → Authentication → Providers → Google, manually enter the Client ID and Client Secret and enable Google. Do not put either value in application source, public environment variables or this report.
-3. In Supabase URL Configuration, confirm Site URL `https://spendense.com` and allow the exact application callback `https://spendense.com/auth/callback`. Review any existing `NEXT_PUBLIC_APP_URL` setting for the same canonical origin. This task has not changed those settings.
-4. Resolve the observed apex-to-www hosting redirect before claiming canonical-domain support. The intended serving/redirect arrangement must keep the OAuth start, verifier cookie, callback and dashboard on the apex host. No opposing app-level alias redirect was added, which would risk a redirect loop with the current hosting rule. Domain changes need operator review: browser-local guest records are origin-specific, so retain an export/recovery path for existing www guest budgets before changing their access origin. This patch neither moves nor deletes those records.
+1. In Google Cloud, use a Web application OAuth client. Confirm the authorized JavaScript origin is `https://www.spendense.com`. Use the Supabase callback URI shown in the existing project's Google-provider page as Google's authorized redirect URI: currently `https://cafchbayuygxiummapyf.supabase.co/auth/v1/callback`. This differs from the application callback.
+2. In Supabase Dashboard → Authentication → Providers → Google, verify the manually configured Client ID and Client Secret and enabled status. Do not put either value in application source, public environment variables or this report.
+3. In Supabase URL Configuration, confirm Site URL `https://www.spendense.com` and allow the exact application callback `https://www.spendense.com/auth/callback`. Review any existing `NEXT_PUBLIC_APP_URL` setting for the same canonical origin. This task has not changed those settings.
+4. Keep the existing www primary domain and apex-to-www hosting redirect. The updated application selects www for the OAuth callback and dashboard; no opposing redirect or hosting change is required. Existing www guest storage remains on its original origin. This patch neither moves nor deletes local records.
 5. After an authorized release/configuration change, perform the live checks below. Provider enabled flags alone do not prove correct Google credentials, consent configuration or session persistence.
 
 These setup details follow [Supabase Google authentication](https://supabase.com/docs/guides/auth/social-login/auth-google). Cookie verification/refresh behavior follows the [Supabase SSR guide](https://supabase.com/docs/guides/auth/server-side/creating-a-client). Public capability shape is documented in the [Supabase Auth settings implementation](https://github.com/supabase/auth/blob/master/internal/api/settings.go).
@@ -42,7 +44,7 @@ These setup details follow [Supabase Google authentication](https://supabase.com
 
 Use a dedicated operator-controlled account, without editing real financial records:
 
-- Start at the apex URL; confirm it remains the canonical host. Continue with Google, choose an account and complete consent.
+- Start at `https://www.spendense.com`; confirm the callback and dashboard stay on www. Continue with Google, choose an account and complete consent.
 - Confirm the app callback exchanges the code and opens `/dashboard` with the verified customer identity, without a second sign-in. A new customer may need the existing once-only customer setup.
 - Refresh and navigate between Dashboard, Calendar and Settings; identity and existing owned expense history must persist. Sign out and sign in again; confirm no duplicate application budgets.
 - Cancel consent and try an expired callback; confirm a clear recovery message, no provider JSON/tokens and usable email/guest controls.
@@ -58,7 +60,7 @@ Validation: focused unit/callback/provider tests; new `e2e/landing-oauth.spec.ts
 
 No financial calculation, repository, RLS policy, database schema, migration or storage key was changed. No migration was applied. The pre-existing generated `next-env.d.ts` edit is excluded from this feature. Existing historical screenshots regenerated by tests are restored; new landing evidence stays under `docs/screenshots/landing-oauth/`.
 
-## Verification
+## Original landing-cleanup verification
 
 Reviewed AGENTS.md, installed Next.js Route Handler/Proxy documentation, auth clients, session provider, callback, account modal and existing tests before editing.
 
@@ -74,8 +76,14 @@ Reviewed AGENTS.md, installed Next.js Route Handler/Proxy documentation, auth cl
 | Guest E2E suite | PASS: 30 tests; 14 expected configuration/project skips |
 | Deployment boundary tests | PASS: 2 tests |
 | Landing responsive/visual checks | PASS: 1440, 1024, 768, 390 and 360px, light/dark, all three CTAs ≥44px, no horizontal overflow |
-| Production Google end-to-end | NOT VERIFIED: provider disabled; canonical hosting alignment/manual configuration pending |
+| Production Google end-to-end | NOT VERIFIED: operator-controlled live check still required; the later public provider check reports enabled |
 
 Configuration-specific skips are deliberate: cloud-only tests run in the local cloud suite, missing-configuration tests run in the guest suite, and the complete landing width matrix runs once in the desktop project. No required local suite was unavailable.
 
 Final successful logs are retained under `docs/validation/landing-oauth/`. No database migrations, remote schema writes, production deployment, main-branch push, or credential configuration was performed.
+
+## www origin follow-up verification
+
+The follow-up changes the shared production origin and related tests; both successful and failed callbacks, plus Google initiation from either production alias, use www. Fresh checks pass: secrets scan, lint, TypeScript, all 139 unit tests, production build, 13 focused local cloud authentication E2Es (3 expected skips), 11 guest/control E2Es (7 expected skips), and 2 maintenance-boundary E2Es. The focused cloud run includes actual local email confirmation, recovery, import, refresh and account-isolation journeys. The skips cover alternate viewport matrices and configuration-specific cases exercised in the complementary suite.
+
+Commands, results and limitations are recorded in [docs/validation/oauth-www](docs/validation/oauth-www/README.md). No financial implementation, schema, hosted URL setting or domain configuration changed. A live operator-controlled Google sign-in and confirmation of the hosted www Site URL/allowlist remain release checks.
