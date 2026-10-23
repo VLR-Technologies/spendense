@@ -87,12 +87,10 @@ describe("authentication boundaries", () => {
     mocks.server.mockResolvedValue({
       auth: {
         exchangeCodeForSession: vi.fn().mockResolvedValue({ error: null }),
-        getClaims: vi
-          .fn()
-          .mockResolvedValue({
-            data: { claims: { sub: "verified" } },
-            error: null,
-          }),
+        getClaims: vi.fn().mockResolvedValue({
+          data: { claims: { sub: "verified" } },
+          error: null,
+        }),
       },
     });
     const response = await callback(

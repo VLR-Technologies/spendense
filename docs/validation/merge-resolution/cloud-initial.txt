@@ -1,0 +1,146 @@
+
+> spendense@1.0.0 test:cloud
+> node scripts/test-cloud.mjs e2e/customer-onboarding.spec.ts e2e/email-password.spec.ts e2e/stage-3.spec.ts e2e/ui-upgrade.spec.ts e2e/landing-oauth.spec.ts
+
+[WebServer] (node:35771) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:35772) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:35786) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 26 tests using 1 worker
+
+(node:35791) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [desktop] › e2e/customer-onboarding.spec.ts:76:5 › customer categories, paid weekdays, retry, once-only setup and settings (8.9s)
+  ✓   2 [desktop] › e2e/customer-onboarding.spec.ts:257:5 › legacy customer completes missing name once without replacing financial history (3.8s)
+  ✘   3 [desktop] › e2e/customer-onboarding.spec.ts:317:5 › missing customer migration preserves an existing budget and supports retry (2.2s)
+(node:35883) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   4 [desktop] › e2e/email-password.spec.ts:76:5 › email/password confirmation, cloud financial history, two accounts and password recovery (19.1s)
+  ✓   5 [desktop] › e2e/landing-oauth.spec.ts:4:5 › landing has three actions and a balanced illustrative card at five widths (2.5s)
+  ✓   6 [desktop] › e2e/landing-oauth.spec.ts:45:5 › cancelled Google sign-in returns a friendly error with guest access (925ms)
+  ✓   7 [desktop] › e2e/landing-oauth.spec.ts:62:5 › disabled local Google provider stays in the app and preserves email and guest access (895ms)
+  ✓   8 [desktop] › e2e/landing-oauth.spec.ts:79:5 › Google button invokes the real SDK with provider google and PKCE (initiation only) (1.1s)
+  -   9 [desktop] › e2e/stage-3.spec.ts:80:5 › optional sign-in preserves guest access and reports missing configuration
+  ✓  10 [desktop] › e2e/stage-3.spec.ts:121:5 › expired callback provides an actionable sign-in error (996ms)
+[WebServer] Error [AuthApiError]: Refresh token is not valid
+[WebServer]     at ignore-listed frames {
+[WebServer]   __isAuthError: true,
+[WebServer]   status: 400,
+[WebServer]   code: 'validation_failed'
+[WebServer] }
+[WebServer] Error [AuthApiError]: Refresh token is not valid
+[WebServer]     at ignore-listed frames {
+[WebServer]   __isAuthError: true,
+[WebServer]   status: 400,
+[WebServer]   code: 'validation_failed'
+[WebServer] }
+  ✓  11 [desktop] › e2e/stage-3.spec.ts:133:5 › local email authentication, consented import, retry, account isolation, refresh and cross-device persistence (19.8s)
+  ✓  12 [desktop] › e2e/ui-upgrade.spec.ts:4:5 › prominent authentication, explicit guest identity, and stable guest entry (2.9s)
+  ✓  13 [desktop] › e2e/ui-upgrade.spec.ts:84:5 › responsive visual hierarchy, themes and large amounts (8.0s)
+(node:36124) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  14 [mobile] › e2e/customer-onboarding.spec.ts:76:5 › customer categories, paid weekdays, retry, once-only setup and settings (6.4s)
+  ✓  15 [mobile] › e2e/customer-onboarding.spec.ts:257:5 › legacy customer completes missing name once without replacing financial history (2.7s)
+  ✘  16 [mobile] › e2e/customer-onboarding.spec.ts:317:5 › missing customer migration preserves an existing budget and supports retry (2.0s)
+(node:36192) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  17 [mobile] › e2e/email-password.spec.ts:76:5 › email/password confirmation, cloud financial history, two accounts and password recovery (17.0s)
+  -  18 [mobile] › e2e/landing-oauth.spec.ts:4:5 › landing has three actions and a balanced illustrative card at five widths
+  ✓  19 [mobile] › e2e/landing-oauth.spec.ts:45:5 › cancelled Google sign-in returns a friendly error with guest access (914ms)
+  ✓  20 [mobile] › e2e/landing-oauth.spec.ts:62:5 › disabled local Google provider stays in the app and preserves email and guest access (909ms)
+  ✓  21 [mobile] › e2e/landing-oauth.spec.ts:79:5 › Google button invokes the real SDK with provider google and PKCE (initiation only) (920ms)
+  -  22 [mobile] › e2e/stage-3.spec.ts:80:5 › optional sign-in preserves guest access and reports missing configuration
+  ✓  23 [mobile] › e2e/stage-3.spec.ts:121:5 › expired callback provides an actionable sign-in error (860ms)
+[WebServer] Error [AuthApiError]: Refresh token is not valid
+[WebServer]     at ignore-listed frames {
+[WebServer]   __isAuthError: true,
+[WebServer]   status: 400,
+[WebServer]   code: 'validation_failed'
+[WebServer] }
+[WebServer] Error [AuthApiError]: Refresh token is not valid
+[WebServer]     at ignore-listed frames {
+[WebServer]   __isAuthError: true,
+[WebServer]   status: 400,
+[WebServer]   code: 'validation_failed'
+[WebServer] }
+  ✓  24 [mobile] › e2e/stage-3.spec.ts:133:5 › local email authentication, consented import, retry, account isolation, refresh and cross-device persistence (17.8s)
+  ✓  25 [mobile] › e2e/ui-upgrade.spec.ts:4:5 › prominent authentication, explicit guest identity, and stable guest entry (2.8s)
+  ✓  26 [mobile] › e2e/ui-upgrade.spec.ts:84:5 › responsive visual hierarchy, themes and large amounts (8.3s)
+
+
+  1) [desktop] › e2e/customer-onboarding.spec.ts:317:5 › missing customer migration preserves an existing budget and supports retry
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('alert')
+    Expected substring: "service update"
+    Error: strict mode violation: getByRole('alert') resolved to 2 elements:
+        1) <div role="alert" class="error-banner">…</div> aka getByText('Personal & Income Details are')
+        2) <div role="alert" aria-live="assertive" id="__next-route-announcer__"></div> aka locator('[id="__next-route-announcer__"]')
+
+    Call log:
+      - Expect "toContainText" getByRole('alert') with timeout 5000ms
+      - waiting for getByRole('alert')
+
+
+      379 |     "Élodie 王 – Customer",
+      380 |   );
+    > 381 |   await expect(page.getByRole("alert")).toContainText("service update");
+          |                                         ^
+      382 |   await expect(page.locator(".budget-equation")).toContainText("₹76,543.21");
+      383 |   await expect(page.locator(".local-badge")).toHaveCount(0);
+      384 |   expect(await history()).toEqual(before);
+        at /Users/likhithreddy/Documents/daywise/e2e/customer-onboarding.spec.ts:381:41
+
+    Error Context: test-results/customer-onboarding-missin-f13ab-g-budget-and-supports-retry-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/customer-onboarding-missin-f13ab-g-budget-and-supports-retry-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/customer-onboarding-missin-f13ab-g-budget-and-supports-retry-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [mobile] › e2e/customer-onboarding.spec.ts:317:5 › missing customer migration preserves an existing budget and supports retry
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('alert')
+    Expected substring: "service update"
+    Error: strict mode violation: getByRole('alert') resolved to 2 elements:
+        1) <div role="alert" class="error-banner">…</div> aka getByText('Personal & Income Details are')
+        2) <div role="alert" aria-live="assertive" id="__next-route-announcer__"></div> aka locator('[id="__next-route-announcer__"]')
+
+    Call log:
+      - Expect "toContainText" getByRole('alert') with timeout 5000ms
+      - waiting for getByRole('alert')
+
+
+      379 |     "Élodie 王 – Customer",
+      380 |   );
+    > 381 |   await expect(page.getByRole("main").getByRole("alert")).toContainText(
+          |                                         ^
+      382 |     "service update",
+      383 |   );
+      384 |   await expect(page.locator(".budget-equation")).toContainText("₹76,543.21");
+        at /Users/likhithreddy/Documents/daywise/e2e/customer-onboarding.spec.ts:381:41
+
+    Error Context: test-results/customer-onboarding-missin-f13ab-g-budget-and-supports-retry-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/customer-onboarding-missin-f13ab-g-budget-and-supports-retry-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/customer-onboarding-missin-f13ab-g-budget-and-supports-retry-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [desktop] › e2e/customer-onboarding.spec.ts:317:5 › missing customer migration preserves an existing budget and supports retry
+    [mobile] › e2e/customer-onboarding.spec.ts:317:5 › missing customer migration preserves an existing budget and supports retry
+  3 skipped
+  21 passed (2.5m)

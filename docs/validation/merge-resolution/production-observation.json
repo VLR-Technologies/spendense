@@ -1,0 +1,9 @@
+{
+  "checkedAt": "2026-10-23T11:08:37.507Z",
+  "readOnly": true,
+  "productionApexRedirect": "https://www.spendense.com/",
+  "productionApexCallbackRedirect": "https://www.spendense.com/auth/callback",
+  "redirectStatus": 308,
+  "googleProviderEnabled": true,
+  "noLoginAttempted": true
+}

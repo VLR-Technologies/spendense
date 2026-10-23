@@ -313,3 +313,106 @@ test("legacy customer completes missing name once without replacing financial hi
   expect(after).toEqual(before);
   expect((await client.from("profiles").select("id")).data).toHaveLength(1);
 });
+
+test("missing customer migration preserves an existing budget and supports retry", async ({
+  page,
+  request,
+}, info) => {
+  test.skip(!cloud, "Disposable local Supabase is required.");
+  test.setTimeout(120000);
+  const email = `migration-order-${info.project.name}-${Date.now()}@example.test`;
+  await register(page, request, email);
+  const client = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    { auth: { persistSession: false } },
+  );
+  expect(
+    (await client.auth.signInWithPassword({ email, password })).error,
+  ).toBeNull();
+  const id = crypto.randomUUID();
+  expect(
+    (
+      await client.from("profiles").insert({
+        id,
+        displayName: "Migration compatibility budget",
+        onboardingComplete: true,
+      })
+    ).error,
+  ).toBeNull();
+  expect(
+    (
+      await client.rpc("daywise_income", {
+        p_id: id,
+        p_month: "2024-02",
+        p_amount: 7654321,
+        p_scope: "default",
+      })
+    ).error,
+  ).toBeNull();
+  expect(
+    (
+      await client.from("daily_expenses").insert({
+        profileId: id,
+        date: "2024-02-29",
+        amountMinor: 12345,
+        category: "Food",
+        description: "Synthetic migration fixture",
+      })
+    ).error,
+  ).toBeNull();
+  const history = async () => ({
+    incomes: (
+      await client.from("income_revisions").select("*").eq("profileId", id)
+    ).data,
+    expenses: (
+      await client.from("daily_expenses").select("*").eq("profileId", id)
+    ).data,
+  });
+  const before = await history();
+  // Simulate an older API schema without modifying even the local database.
+  await page.route("**/rest/v1/customer_financial_preferences?**", (route) =>
+    route.fulfill({ status: 404, json: { code: "PGRST205" } }),
+  );
+  await page.reload();
+  await expect(page.locator(".hero-customer")).toHaveText(
+    "Élodie 王 – Customer",
+  );
+  await expect(page.getByRole("main").getByRole("alert")).toContainText(
+    "service update",
+  );
+  await expect(page.locator(".budget-equation")).toContainText("₹76,543.21");
+  await expect(page.locator(".local-badge")).toHaveCount(0);
+  expect(await history()).toEqual(before);
+  await page.unroute("**/rest/v1/customer_financial_preferences?**");
+  await page.getByRole("button", { name: "Retry personal details" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Tell us about yourself", exact: true }),
+  ).toBeVisible();
+  await next(page);
+  await next(page);
+  await next(page);
+  await page.route("**/rest/v1/rpc/spendense_save_customer", (route) =>
+    route.fulfill({ status: 404, json: { code: "PGRST202" } }),
+  );
+  await page
+    .getByRole("button", { name: "Complete setup", exact: true })
+    .click();
+  await expect(
+    page.locator(".customer-onboarding").getByRole("alert"),
+  ).toContainText("service update");
+  expect(await history()).toEqual(before);
+  expect((await client.from("profiles").select("id")).data).toHaveLength(1);
+  expect(
+    (await client.from("customer_financial_preferences").select("*")).data,
+  ).toHaveLength(0);
+  await page.unroute("**/rest/v1/rpc/spendense_save_customer");
+  await page
+    .getByRole("button", { name: "Complete setup", exact: true })
+    .click();
+  await expect(page.locator(".hero-customer")).toHaveText(
+    "Élodie 王 – Customer",
+  );
+  expect(await history()).toEqual(before);
+  expect((await client.from("profiles").select("id")).data).toHaveLength(1);
+});
