@@ -62,7 +62,7 @@ function Welcome() {
   } = useApp();
   const [busy, setBusy] = useState(false);
   const starting = useRef(false);
-  async function start(demo = false) {
+  async function start() {
     if (starting.current) return;
     starting.current = true;
     setBusy(true);
@@ -70,7 +70,7 @@ function Welcome() {
       const budget =
         mode === "cloud" && repository instanceof CloudRepository
           ? await repository.openPersonalBudget()
-          : await localRepository.openGuestBudget(demo);
+          : await localRepository.openGuestBudget();
       selectProfile(budget.id);
     });
     starting.current = false;
@@ -123,16 +123,6 @@ function Welcome() {
               {account ? "Create budget" : "Continue as guest"}
               <ArrowRight size={18} />
             </Button>
-            {!account && (
-              <Button
-                disabled={busy}
-                variant="ghost"
-                onClick={() => start(true)}
-              >
-                Try demo
-                <ArrowUpRight size={17} />
-              </Button>
-            )}
           </div>
           <div className="welcome-trust">
             <span>

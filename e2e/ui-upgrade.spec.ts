@@ -1,15 +1,20 @@
+import { installDemoFixture } from "../scripts/lib/demo-fixture.cjs";
 import { test, expect } from "@playwright/test";
 
 test("prominent authentication, explicit guest identity, and stable guest entry", async ({
   page,
 }) => {
   await page.goto("/");
-  for (const name of [
-    "Sign in",
-    "Create account",
-    "Continue as guest",
-    "Try demo",
-  ]) {
+  await expect(
+    page.getByRole("button", { name: /Try (the )?demo/i }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("link", { name: /Try (the )?demo/i }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByLabel("Spendense sample budget preview"),
+  ).toBeVisible();
+  for (const name of ["Sign in", "Create account", "Continue as guest"]) {
     const action = page.getByRole("button", { name, exact: true });
     await expect(action).toBeVisible();
     expect((await action.boundingBox())?.height).toBeGreaterThanOrEqual(44);
@@ -81,7 +86,7 @@ test("responsive visual hierarchy, themes and large amounts", async ({
 }, info) => {
   test.setTimeout(90000);
   await page.goto("/");
-  await page.getByRole("button", { name: "Try demo", exact: true }).click();
+  await installDemoFixture(page);
   for (const width of [1440, 1024, 768, 390, 360]) {
     await page.setViewportSize({ width, height: 1000 });
     for (const theme of ["light", "dark"]) {

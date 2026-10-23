@@ -1,0 +1,102 @@
+
+> spendense@1.0.0 test:cloud
+> node scripts/test-cloud.mjs
+
+[WebServer] (node:36489) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:36490) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:36504) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 46 tests using 1 worker
+
+(node:36507) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [desktop] › e2e/customer-onboarding.spec.ts:76:5 › customer categories, paid weekdays, retry, once-only setup and settings (7.1s)
+  ✓   2 [desktop] › e2e/customer-onboarding.spec.ts:257:5 › legacy customer completes missing name once without replacing financial history (2.9s)
+  ✓   3 [desktop] › e2e/customer-onboarding.spec.ts:317:5 › missing customer migration preserves an existing budget and supports retry (2.5s)
+  ✓   4 [desktop] › e2e/daywise.spec.ts:8:5 › guest-first complete local finance journey (6.1s)
+  ✓   5 [desktop] › e2e/daywise.spec.ts:145:5 › demo dashboard, all views, and responsive screenshots (5.2s)
+  ✓   6 [desktop] › e2e/daywise.spec.ts:198:5 › guest can skip setup and start from an empty budget (1.5s)
+[WebServer] [browser] The query {"id":"982671ee-66d0-4bb0-95e1-fd7482010cd3","profileId":"cfa8baf4-b1ca-4e46-aae2-ac747956337b"} on commitments would benefit from a compound index [id+profileId] (src/lib/repositories/local.ts:361:8)
+  ✓   7 [desktop] › e2e/daywise.spec.ts:224:5 › monthly commitments support one-time conversion, pause, resume and payment metadata (3.2s)
+  ✓   8 [desktop] › e2e/daywise.spec.ts:298:5 › blocked browser storage shows an actionable recovery state (538ms)
+  ✓   9 [desktop] › e2e/email-password.spec.ts:76:5 › email/password confirmation, cloud financial history, two accounts and password recovery (16.9s)
+  ✓  10 [desktop] › e2e/landing-oauth.spec.ts:4:5 › landing has three actions and a balanced illustrative card at five widths (2.6s)
+  ✓  11 [desktop] › e2e/landing-oauth.spec.ts:45:5 › cancelled Google sign-in returns a friendly error with guest access (899ms)
+  ✓  12 [desktop] › e2e/landing-oauth.spec.ts:62:5 › disabled local Google provider stays in the app and preserves email and guest access (939ms)
+  ✓  13 [desktop] › e2e/landing-oauth.spec.ts:79:5 › Google button invokes the real SDK with provider google and PKCE (initiation only) (967ms)
+  ✓  14 [desktop] › e2e/rebranding.spec.ts:3:5 › Spendense branding preserves an existing demo profile and financial records (1.3s)
+[WebServer] [browser] The query {"id":"0237f43f-b441-469c-accb-343b6ae4aae2","profileId":"cfa8baf4-b1ca-4e46-aae2-ac747956337b"} on expenses would benefit from a compound index [id+profileId] (src/lib/repositories/local.ts:263:34)
+  ✓  15 [desktop] › e2e/stage-2.spec.ts:34:5 › Stage 2 financial chain, calendar keyboard controls and nested sheet focus (3.8s)
+[WebServer] [browser] You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled
+[WebServer] [browser] You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled (src/components/forms.tsx:36:35)
+[WebServer] [browser] You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled (src/components/forms.tsx:36:35)
+[WebServer] [browser] You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled (src/components/forms.tsx:36:35)
+  ✓  16 [desktop] › e2e/stage-2.spec.ts:152:5 › Stage 2 screenshots and navigation in both themes (3.9s)
+  -  17 [desktop] › e2e/stage-2.spec.ts:221:5 › Stage 2 responsive layouts retain usable touch controls at narrow widths
+  ✓  18 [desktop] › e2e/stage-2.spec.ts:283:5 › Stage 2 reads existing v1 history and recurring data without rewriting saved records (1.7s)
+  -  19 [desktop] › e2e/stage-3.spec.ts:80:5 › optional sign-in preserves guest access and reports missing configuration
+  ✓  20 [desktop] › e2e/stage-3.spec.ts:121:5 › expired callback provides an actionable sign-in error (915ms)
+[WebServer] Error [AuthApiError]: Refresh token is not valid
+[WebServer]     at ignore-listed frames {
+[WebServer]   __isAuthError: true,
+[WebServer]   status: 400,
+[WebServer]   code: 'validation_failed'
+[WebServer] }
+[WebServer] Error [AuthApiError]: Refresh token is not valid
+[WebServer]     at ignore-listed frames {
+[WebServer]   __isAuthError: true,
+[WebServer]   status: 400,
+[WebServer]   code: 'validation_failed'
+[WebServer] }
+  ✓  21 [desktop] › e2e/stage-3.spec.ts:133:5 › local email authentication, consented import, retry, account isolation, refresh and cross-device persistence (17.6s)
+  ✓  22 [desktop] › e2e/ui-upgrade.spec.ts:4:5 › prominent authentication, explicit guest identity, and stable guest entry (2.8s)
+  ✓  23 [desktop] › e2e/ui-upgrade.spec.ts:84:5 › responsive visual hierarchy, themes and large amounts (7.6s)
+(node:36854) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  24 [mobile] › e2e/customer-onboarding.spec.ts:76:5 › customer categories, paid weekdays, retry, once-only setup and settings (6.9s)
+  ✓  25 [mobile] › e2e/customer-onboarding.spec.ts:257:5 › legacy customer completes missing name once without replacing financial history (3.0s)
+  ✓  26 [mobile] › e2e/customer-onboarding.spec.ts:317:5 › missing customer migration preserves an existing budget and supports retry (2.6s)
+  ✓  27 [mobile] › e2e/daywise.spec.ts:8:5 › guest-first complete local finance journey (5.9s)
+  ✓  28 [mobile] › e2e/daywise.spec.ts:145:5 › demo dashboard, all views, and responsive screenshots (6.0s)
+  ✓  29 [mobile] › e2e/daywise.spec.ts:198:5 › guest can skip setup and start from an empty budget (2.7s)
+[WebServer] [browser] The query {"id":"982671ee-66d0-4bb0-95e1-fd7482010cd3","profileId":"cfa8baf4-b1ca-4e46-aae2-ac747956337b"} on commitments would benefit from a compound index [id+profileId] (src/lib/repositories/local.ts:361:8)
+  ✓  30 [mobile] › e2e/daywise.spec.ts:224:5 › monthly commitments support one-time conversion, pause, resume and payment metadata (3.2s)
+  ✓  31 [mobile] › e2e/daywise.spec.ts:298:5 › blocked browser storage shows an actionable recovery state (1.3s)
+  ✓  32 [mobile] › e2e/email-password.spec.ts:76:5 › email/password confirmation, cloud financial history, two accounts and password recovery (17.8s)
+  -  33 [mobile] › e2e/landing-oauth.spec.ts:4:5 › landing has three actions and a balanced illustrative card at five widths
+  ✓  34 [mobile] › e2e/landing-oauth.spec.ts:45:5 › cancelled Google sign-in returns a friendly error with guest access (978ms)
+  ✓  35 [mobile] › e2e/landing-oauth.spec.ts:62:5 › disabled local Google provider stays in the app and preserves email and guest access (923ms)
+  ✓  36 [mobile] › e2e/landing-oauth.spec.ts:79:5 › Google button invokes the real SDK with provider google and PKCE (initiation only) (927ms)
+  ✓  37 [mobile] › e2e/rebranding.spec.ts:3:5 › Spendense branding preserves an existing demo profile and financial records (1.2s)
+[WebServer] [browser] The query {"id":"d5f1c8d3-de91-4568-bf2e-d207a840696c","profileId":"cfa8baf4-b1ca-4e46-aae2-ac747956337b"} on expenses would benefit from a compound index [id+profileId] (src/lib/repositories/local.ts:263:34)
+  ✓  38 [mobile] › e2e/stage-2.spec.ts:34:5 › Stage 2 financial chain, calendar keyboard controls and nested sheet focus (4.0s)
+[WebServer] [browser] You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled
+[WebServer] [browser] You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled (src/components/forms.tsx:36:35)
+[WebServer] [browser] You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled (src/components/forms.tsx:36:35)
+[WebServer] [browser] You have Reduced Motion enabled on your device. Animations may not appear as expected.. For more information and steps for solving, visit https://motion.dev/troubleshooting/reduced-motion-disabled (src/components/forms.tsx:36:35)
+  ✓  39 [mobile] › e2e/stage-2.spec.ts:152:5 › Stage 2 screenshots and navigation in both themes (4.7s)
+  ✓  40 [mobile] › e2e/stage-2.spec.ts:221:5 › Stage 2 responsive layouts retain usable touch controls at narrow widths (14.8s)
+  ✓  41 [mobile] › e2e/stage-2.spec.ts:283:5 › Stage 2 reads existing v1 history and recurring data without rewriting saved records (2.7s)
+  -  42 [mobile] › e2e/stage-3.spec.ts:80:5 › optional sign-in preserves guest access and reports missing configuration
+  ✓  43 [mobile] › e2e/stage-3.spec.ts:121:5 › expired callback provides an actionable sign-in error (911ms)
+[WebServer] Error [AuthApiError]: Refresh token is not valid
+[WebServer]     at ignore-listed frames {
+[WebServer]   __isAuthError: true,
+[WebServer]   status: 400,
+[WebServer]   code: 'validation_failed'
+[WebServer] }
+[WebServer] Error [AuthApiError]: Refresh token is not valid
+[WebServer]     at ignore-listed frames {
+[WebServer]   __isAuthError: true,
+[WebServer]   status: 400,
+[WebServer]   code: 'validation_failed'
+[WebServer] }
+  ✓  44 [mobile] › e2e/stage-3.spec.ts:133:5 › local email authentication, consented import, retry, account isolation, refresh and cross-device persistence (17.7s)
+  ✓  45 [mobile] › e2e/ui-upgrade.spec.ts:4:5 › prominent authentication, explicit guest identity, and stable guest entry (2.8s)
+  ✓  46 [mobile] › e2e/ui-upgrade.spec.ts:84:5 › responsive visual hierarchy, themes and large amounts (8.9s)
+
+  4 skipped
+  42 passed (3.5m)

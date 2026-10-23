@@ -1,10 +1,11 @@
+import { installDemoFixture } from "../scripts/lib/demo-fixture.cjs";
 import { test, expect, type Page, type Locator } from "@playwright/test";
 import fs from "node:fs/promises";
 
 async function demo(page: Page) {
   await page.clock.setFixedTime(new Date("2026-10-22T12:00:00+02:00"));
   await page.goto("/");
-  await page.getByRole("button", { name: "Try demo", exact: true }).click();
+  await installDemoFixture(page);
   await expect(
     page.getByRole("heading", {
       name: /Good (morning|afternoon|evening), Demo/,
@@ -285,7 +286,7 @@ test("Stage 2 reads existing v1 history and recurring data without rewriting sav
   await page.clock.setFixedTime(new Date("2026-10-22T12:00:00+02:00"));
   await page.goto("/");
   await expect(
-    page.getByRole("button", { name: "Try demo", exact: true }),
+    page.getByRole("button", { name: "Continue as guest", exact: true }),
   ).toBeVisible();
   const profileId = "stage-1-profile";
   const createdAt = "2026-09-01T10:00:00.000Z";

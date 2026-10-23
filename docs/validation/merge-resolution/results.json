@@ -1,0 +1,38 @@
+{
+  "secrets": {
+    "exit": 0,
+    "seconds": 0.5
+  },
+  "lint": {
+    "exit": 0,
+    "seconds": 3.9
+  },
+  "types": {
+    "exit": 0,
+    "seconds": 2.1
+  },
+  "unit": {
+    "exit": 0,
+    "seconds": 12.1
+  },
+  "build": {
+    "exit": 0,
+    "seconds": 11.1
+  },
+  "db": {
+    "exit": 0,
+    "seconds": 4.0
+  },
+  "cloud": {
+    "exit": 0,
+    "seconds": 210.5
+  },
+  "guest": {
+    "exit": 0,
+    "seconds": 128.5
+  },
+  "deployment": {
+    "exit": 0,
+    "seconds": 10.0
+  }
+}

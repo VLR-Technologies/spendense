@@ -1,3 +1,4 @@
+import { installDemoFixture } from "../scripts/lib/demo-fixture.cjs";
 import { test, expect, type Page } from "@playwright/test";
 import fs from "node:fs/promises";
 const go = async (page: Page, path: string) => {
@@ -148,7 +149,7 @@ test("demo dashboard, all views, and responsive screenshots", async ({
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/");
-  await page.getByRole("button", { name: "Try demo" }).click();
+  await installDemoFixture(page);
   await expect(
     page.getByRole("heading", {
       name: /Good (morning|afternoon|evening), Demo/,
@@ -224,7 +225,7 @@ test("monthly commitments support one-time conversion, pause, resume and payment
   page,
 }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Try demo" }).click();
+  await installDemoFixture(page);
   await expect(
     page.getByRole("heading", {
       name: /Good (morning|afternoon|evening), Demo/,

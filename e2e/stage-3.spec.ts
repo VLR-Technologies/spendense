@@ -1,3 +1,4 @@
+import { installDemoFixture } from "../scripts/lib/demo-fixture.cjs";
 import { readLocalSession, writeLocalSession } from "./helpers/session";
 import { completeCustomerSetup } from "./helpers/customer";
 import { createClient } from "@supabase/supabase-js";
@@ -94,7 +95,7 @@ test("optional sign-in preserves guest access and reports missing configuration"
   await page
     .getByRole("button", { name: "Continue as guest", exact: true })
     .click();
-  await page.getByRole("button", { name: "Try demo", exact: true }).click();
+  await installDemoFixture(page);
   await expect(
     page.getByRole("heading", {
       name: /Good (morning|afternoon|evening), Demo/,
@@ -126,7 +127,7 @@ test("expired callback provides an actionable sign-in error", async ({
     .getByRole("button", { name: "Continue as guest", exact: true })
     .click();
   await expect(
-    page.getByRole("button", { name: "Try demo", exact: true }),
+    page.getByRole("button", { name: "Continue as guest", exact: true }),
   ).toBeVisible();
 });
 test("local email authentication, consented import, retry, account isolation, refresh and cross-device persistence", async ({
@@ -140,7 +141,7 @@ test("local email authentication, consented import, retry, account isolation, re
   test.setTimeout(180000);
   const email = `daywise-${info.project.name}-${Date.now()}@example.test`;
   await page.goto("/");
-  await page.getByRole("button", { name: "Try demo", exact: true }).click();
+  await installDemoFixture(page);
   await expect(
     page.getByRole("region", { name: "Monthly budget calculation" }),
   ).toContainText("₹81,000");

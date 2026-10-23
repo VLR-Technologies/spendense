@@ -135,6 +135,8 @@ describe("customer persistence", () => {
   });
   it.each([
     ["42P01", "service update"],
+    ["PGRST205", "service update"],
+    ["PGRST202", "service update"],
     ["40001", "another session"],
     ["offline", "retry"],
   ])("reports %s without replacing records", async (code, message) => {

@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-23",
+  "method": "Isolated public browser; no credentials entered and no account or financial records changed",
+  "requestedOrigin": "https://spendense.com",
+  "observedLandingOrigin": "https://www.spendense.com",
+  "googleAuthorizeOrigin": "https://cafchbayuygxiummapyf.supabase.co",
+  "provider": "google",
+  "observedRedirectTo": "https://www.spendense.com/auth/callback",
+  "observedError": "Unsupported provider: provider is not enabled",
+  "successfulGoogleAuthentication": false,
+  "hostedConfigurationChanged": false
+}

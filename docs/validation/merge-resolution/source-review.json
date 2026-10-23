@@ -1,0 +1,60 @@
+{
+  "branch": "UI-upgrade",
+  "sourceBeforeMerge": "8e2fe3ae9576622a1b9706e400bd12fb5dbece53",
+  "mainMerged": "f120a0c619982bc0da47c4cc2b29ae44f5427948",
+  "conflictsReviewed": [
+    {
+      "path": "e2e/daywise.spec.ts",
+      "uiBlob": "64f84eb5813badafef77b2db86fd60cf7f1c9a99",
+      "mainBlob": "864168b7106beab6747b26e3b43c382f0031adad"
+    },
+    {
+      "path": "e2e/email-password.spec.ts",
+      "uiBlob": "bb7d324ab53aba51b0d3e0fba7bd0d9cafc9d547",
+      "mainBlob": "355b14977e2f3d2f84e90fa34e8686d2e9bce555"
+    },
+    {
+      "path": "e2e/stage-2.spec.ts",
+      "uiBlob": "cadf08a40f265770d8086107b754795ff4192701",
+      "mainBlob": "8f645bee3ea236c7a942c3b402fd59a72403ac06"
+    },
+    {
+      "path": "e2e/stage-3.spec.ts",
+      "uiBlob": "9a899c43c7d23d7594a0941278b547ba98bd0801",
+      "mainBlob": "57bd9d6b21edecb46be442d68ddc6bd20c0c4763"
+    },
+    {
+      "path": "e2e/ui-upgrade.spec.ts",
+      "uiBlob": "2dff625c61516869fc40fa9bcf36808c5bb2c46e",
+      "mainBlob": "8d3f3951eecb5e8bd8f4802fa8b8546fb0c6de23"
+    },
+    {
+      "path": "scripts/capture-customer-ui.mjs",
+      "uiBlob": "bcd296c4b07de1b22ad4622459b22894b7670e0e",
+      "mainBlob": "c373f7586bf1e9ba26aa95ae1d3ffa090810e669"
+    },
+    {
+      "path": "scripts/capture-ui.mjs",
+      "uiBlob": "67c1f57e6a2b7a335a713a7b6f4c0162ab90ad19",
+      "mainBlob": "5ee0016df20b95530333d95e15773a10917be8d3"
+    },
+    {
+      "path": "src/components/shell.tsx",
+      "uiBlob": "433f8d16f6d25af2ae5b7bfd8a1a0ca7a409f070",
+      "mainBlob": "18eb59f16d9a65a041edd20863d37e63b604d9d1"
+    },
+    {
+      "path": "src/tests/auth.test.ts",
+      "uiBlob": "1ad9588d56ff0d27fab025760f35388f70653f31",
+      "mainBlob": "ff385eaa4a835ec72ed54e30b47b9b2600e50c06"
+    }
+  ],
+  "identicalBeforeMergeOnBothBranches": {
+    "src/lib/finance.ts": true,
+    "src/lib/repositories/local.ts": true,
+    "src/lib/repositories/cloud.ts": true,
+    "src/lib/account-migration.ts": true,
+    "src/components/provider.tsx": true,
+    "supabase/migrations": true
+  }
+}

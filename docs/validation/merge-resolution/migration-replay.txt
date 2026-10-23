@@ -1,0 +1,12 @@
+LOCAL ONLY: fresh isolated database inside supabase_db_daywise
+Minimal auth.users + actual local auth.uid(); full local Supabase tested separately.
+PASS fresh apply 202610220001_schema.sql
+PASS fresh apply 202610220002_operations.sql
+PASS fresh apply 202610220003_payment_state.sql
+PASS fresh apply 202610230001_customer_preferences.sql over an existing synthetic budget
+PASS all pre/post daywise_export records unchanged (excluding volatile exportedAt)
+PASS customer_preferences.test.sql: 26 pgTAP assertions
+PASS finance_import.test.sql: 27 pgTAP assertions
+PASS payment_state.test.sql: 8 pgTAP assertions
+PASS rls.test.sql: 96 pgTAP assertions
+PASS all 157 pgTAP assertions after fresh migrations
